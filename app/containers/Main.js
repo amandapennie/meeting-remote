@@ -30,19 +30,19 @@ class MainView extends React.Component {
         <TouchableOpacity onPress={this._onPressGTM} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/gtm.png')}
+            source={require('./logos/gtmw.png')}
           />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressBlueJeans} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/bluejeans.png')}
+            source={require('./logos/bluejeansw.png')}
           />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressHangout} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/hangout.png')}
+            source={require('./logos/hangoutw.png')}
           />      
         </TouchableOpacity>
         </View>
@@ -50,19 +50,19 @@ class MainView extends React.Component {
         <TouchableOpacity onPress={this._onPressZoom} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/zoom.png')}
+            source={require('./logos/zoomw.png')}
           />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressWebex} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/webex.png')}
+            source={require('./logos/webexw.png')}
           />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressSkype} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/skype.png')}
+            source={require('./logos/skypew.png')}
           />      
         </TouchableOpacity>
         </View>
@@ -143,9 +143,9 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        height: 5,
-        width: 150,
-        padding: 55,
+        height: 50,
+        width: 175,
+        padding: 60,
         alignItems: 'center',
     },
     touch: {
