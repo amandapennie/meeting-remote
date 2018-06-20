@@ -24,7 +24,7 @@ const scenes = Actions.create(
       <Scene key="scan" component={Scan} hideNavBar={true} title="Scan"/>
       <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
       <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
-      <Scene key="unsupported" component={Login} hideNavBar={true} title="Unsupported"/>
+      <Scene key="unsupported" component={Unsupported} hideNavBar={true} title="Unsupported"/>
   </Scene>
 );
 

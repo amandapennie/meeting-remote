@@ -17,6 +17,7 @@ import {
   Linking,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
 
 
 class MainView extends React.Component {
@@ -76,23 +77,23 @@ class MainView extends React.Component {
   }
 
   _onPressBlueJeans = () => {
-    Alert.alert('Logging into BlueJeans')
+    Actions.unsupported()
   }
 
   _onPressWebex = () => {
-    Alert.alert('Logging into Webex')
+    Actions.unsupported()
   }
 
   _onPressZoom = () => {
-    Alert.alert('Logging into Zoom')
+    Actions.unsupported()
   }
 
   _onPressHangout = () => {
-    Alert.alert('Logging into Google Hangouts')
+    Actions.unsupported()
   }
 
   _onPressSkype = () => {
-    Alert.alert('Logging into Skype')
+    Actions.unsupported()
   }
 }
 
