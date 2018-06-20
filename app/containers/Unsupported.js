@@ -30,7 +30,11 @@ class UnsupportedView extends React.Component {
         </TouchableOpacity>,    
       <View style={styles.title}>,
       <Text style={styles.titleText}> Interested in using Zoom? </Text>, 
+      <Text style={styles.titleText}>                              
+      </Text>,
       <Button style={styles.button} title='Yes' onPress= {this._onPressUnsupport}/>,
+      <Text style={styles.titleText}>                              
+      </Text>,
       <Button style={styles.button} title='No' onPress={this._onPressHome} />
       </View>,
     ];
