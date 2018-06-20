@@ -14,6 +14,7 @@ import {
   FlatList,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -70,31 +71,30 @@ class MainView extends React.Component {
     ];
   }
   
-  _onPressGTM() {
+  _onPressGTM = () => {
     Alert.alert('Logging into GoToMeeting')
   }
 
-  _onPressBlueJeans() {
+  _onPressBlueJeans = () => {
     Alert.alert('Logging into BlueJeans')
   }
 
-  _onPressWebex() {
+  _onPressWebex = () => {
     Alert.alert('Logging into Webex')
   }
 
-  _onPressZoom() {
+  _onPressZoom = () => {
     Alert.alert('Logging into Zoom')
   }
 
-  _onPressHangout() {
+  _onPressHangout = () => {
     Alert.alert('Logging into Google Hangouts')
   }
 
-  _onPressSkype() {
+  _onPressSkype = () => {
     Alert.alert('Logging into Skype')
   }
 }
-
 
 function mapStateToProps(state, ownProps) {
   return {
