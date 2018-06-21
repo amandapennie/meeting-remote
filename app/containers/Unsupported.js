@@ -21,21 +21,12 @@ import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
 
 class UnsupportedView extends React.Component {
   render() {
-    return [
-        <TouchableOpacity onPress={this._onPressZoom} style={ styles.touch }>
-          <Image
-            style={ styles.button }
-            source={require('./logos/zoomw.png')}
-          />      
-        </TouchableOpacity>,    
+    return [  
       <View style={styles.title}>,
-      <Text style={styles.titleText}> Interested in using Zoom? </Text>, 
-      <Text style={styles.titleText}>                              
+      <Text style={styles.titleText}> Unsupported Provider </Text>,
+      <Text style={styles.subText}>
       </Text>,
-      <Button style={styles.button} title='Yes' onPress= {this._onPressUnsupport}/>,
-      <Text style={styles.titleText}>                              
-      </Text>,
-      <Button style={styles.button} title='No' onPress={this._onPressHome} />
+      <Text style={styles.subText}> Meeting Remote does not currently support this provider. </Text>, 
       </View>,
     ];
   }
@@ -68,20 +59,23 @@ export { Unsupported };
 const styles = StyleSheet.create({
     titleText: {
         fontFamily: 'HelveticaNeue-Light',
-        fontSize: 28,
+        fontSize: 26,
         padding: 2,
+        textAlign: 'center',
     },
     subText: {
         fontFamily: 'HelveticaNeue-Thin',
-        fontSize: 14,
+        fontSize: 20,
+        textAlign: 'center',
     },
     title: {
         borderColor: '#fff',
         flex: 1,
         flexDirection: 'column',
-        borderTopWidth: 20,
+        borderWidth: 30,
         flexWrap: 'wrap',
-        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
         backgroundColor: '#fff',
     },
     container: {
@@ -92,6 +86,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         alignContent: 'center',
+        alignSelf: 'center',
         justifyContent: 'space-between',
     },
     button: {
