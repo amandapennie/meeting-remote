@@ -3,6 +3,7 @@ package com.meetingremote;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.charlires.segmentanalytics.SegmentAnalyticsPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.geniem.rnble.RNBLEPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
             new SegmentAnalyticsPackage(),
             new BlePackage(),
             new RNBLEPackage()

@@ -1,4 +1,6 @@
 rootProject.name = 'MeetingRemote'
+include ':react-native-device-info'
+project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
 include ':react-native-segment-analytics'
 project(':react-native-segment-analytics').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-segment-analytics/android')
 include ':react-native-ble-plx'

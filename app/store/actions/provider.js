@@ -34,13 +34,13 @@ export function selectProvider(providerType) {
     dispatch(providerSelected(providerType));
     if (isTypeSupported(providerType)) {
       track("Provider_Selected", {
-        "provider" : "providerType",
+        "provider" : providerType,
         "supported" : true
       })
       dispatch(Actions.login());
     } else {
       track("Provider_Selected", {
-        "provider" : "providerType",
+        "provider" : providerType,
         "supported" : false
       })
       dispatch(Actions.unsupported());

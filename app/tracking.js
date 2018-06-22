@@ -1,16 +1,12 @@
 import Analytics from 'analytics-react-native';
-import DeviceUUID from 'react-native-device-uuid';
-
-var anonymousId;
-
-DeviceUUID.getUUID().then((uuid) => {
-  anonymousId = uuid;
-});
+import DeviceInfo from 'react-native-device-info';
 
 const analytics = new Analytics("0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V");
 
-export function track (event, params) {
+export const DEVICE_ID = DeviceInfo.getUniqueID();
+
+export function track (event, properties) {
 	analytics.track(
-		Object.assign({anonymousId}, {event}, params)
+		Object.assign({anonymousId: DEVICE_ID}, {event}, {properties: properties})
 	)
 }

@@ -35,9 +35,8 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* MeetingRemoteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MeetingRemoteTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
-		4CED9438C82B444BAC72863C /* libSegmentAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFAB4D93B76F4154978323CD /* libSegmentAnalytics.a */; };
-		56F57EBA77B942C091032C4D /* libRCTDeviceUUID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED480868737A4AA1AE75E533 /* libRCTDeviceUUID.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		73A0A02820DD9278006A78ED /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A0A02520DD91F5006A78ED /* libRNDeviceInfo.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		DBA0ABE8CC254BFEA9FD0F17 /* libRNBLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 28CBEB32C3024E66A29B2343 /* libRNBLE.a */; };
@@ -303,6 +302,20 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNBLE;
 		};
+		73A0A02420DD91F5006A78ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DA5891D81BA9A9FC002B4DB2;
+			remoteInfo = RNDeviceInfo;
+		};
+		73A0A02620DD91F5006A78ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E72EC1401F7ABB5A0001BC90;
+			remoteInfo = "RNDeviceInfo-tvOS";
+		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
@@ -323,20 +336,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
-		};
-		B6BA4DAD20DD822A0035132D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8845CB31A45E409FA2254922 /* RCTDeviceUUID.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
-			remoteInfo = RCTDeviceUUID;
-		};
-		B6BA4DB020DD822A0035132D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F1B7F6CC68E4685BA333752 /* SegmentAnalytics.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 094964C11E156E4D0097C117;
-			remoteInfo = SegmentAnalytics;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -360,21 +359,17 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MeetingRemote/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MeetingRemote/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		1F1B7F6CC68E4685BA333752 /* SegmentAnalytics.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SegmentAnalytics.xcodeproj; path = "../node_modules/react-native-segment-analytics/ios/SegmentAnalytics.xcodeproj"; sourceTree = "<group>"; };
 		28CBEB32C3024E66A29B2343 /* libRNBLE.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBLE.a; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* MeetingRemote-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MeetingRemote-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* MeetingRemote-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MeetingRemote-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B0F670282A94EEEB3653A4B /* libBleClient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBleClient.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		8845CB31A45E409FA2254922 /* RCTDeviceUUID.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTDeviceUUID.xcodeproj; path = "../node_modules/react-native-device-uuid/RCTDeviceUUID.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AF8D00C695A24DCBADF94989 /* RNBLE.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBLE.xcodeproj; path = "../node_modules/react-native-ble/RNBLE.xcodeproj"; sourceTree = "<group>"; };
-		B6BA4D7320DD79630035132D /* Target Support Files */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Target Support Files"; path = "../node_modules/react-native-segment-analytics/ios/Pods/Target Support Files"; sourceTree = "<group>"; };
-		ED480868737A4AA1AE75E533 /* libRCTDeviceUUID.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTDeviceUUID.a; sourceTree = "<group>"; };
-		FFAB4D93B76F4154978323CD /* libSegmentAnalytics.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSegmentAnalytics.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -390,6 +385,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73A0A02820DD9278006A78ED /* libRNDeviceInfo.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -404,8 +400,6 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DBA0ABE8CC254BFEA9FD0F17 /* libRNBLE.a in Frameworks */,
-				56F57EBA77B942C091032C4D /* libRCTDeviceUUID.a in Frameworks */,
-				4CED9438C82B444BAC72863C /* libSegmentAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,7 +548,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B6BA4D7320DD79630035132D /* Target Support Files */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 			);
 			name = Frameworks;
@@ -574,8 +567,6 @@
 			children = (
 				28CBEB32C3024E66A29B2343 /* libRNBLE.a */,
 				5B0F670282A94EEEB3653A4B /* libBleClient.a */,
-				ED480868737A4AA1AE75E533 /* libRCTDeviceUUID.a */,
-				FFAB4D93B76F4154978323CD /* libSegmentAnalytics.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -584,6 +575,15 @@
 			isa = PBXGroup;
 			children = (
 				735F6CF420D0B49C002BE66C /* libRNBLE.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		73A0A02020DD91E6006A78ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				73A0A02520DD91F5006A78ED /* libRNDeviceInfo.a */,
+				73A0A02720DD91F5006A78ED /* libRNDeviceInfo-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -600,6 +600,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -613,8 +614,6 @@
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				AF8D00C695A24DCBADF94989 /* RNBLE.xcodeproj */,
-				8845CB31A45E409FA2254922 /* RCTDeviceUUID.xcodeproj */,
-				1F1B7F6CC68E4685BA333752 /* SegmentAnalytics.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -659,22 +658,6 @@
 			children = (
 				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
 				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B6BA4DA820DD822A0035132D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B6BA4DAE20DD822A0035132D /* libRCTDeviceUUID.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B6BA4DAA20DD822A0035132D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B6BA4DB120DD822A0035132D /* libSegmentAnalytics.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -811,10 +794,6 @@
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
 				},
 				{
-					ProductGroup = B6BA4DA820DD822A0035132D /* Products */;
-					ProjectRef = 8845CB31A45E409FA2254922 /* RCTDeviceUUID.xcodeproj */;
-				},
-				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
@@ -855,8 +834,8 @@
 					ProjectRef = AF8D00C695A24DCBADF94989 /* RNBLE.xcodeproj */;
 				},
 				{
-					ProductGroup = B6BA4DAA20DD822A0035132D /* Products */;
-					ProjectRef = 1F1B7F6CC68E4685BA333752 /* SegmentAnalytics.xcodeproj */;
+					ProductGroup = 73A0A02020DD91E6006A78ED /* Products */;
+					ProjectRef = 73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1115,6 +1094,20 @@
 			remoteRef = 735F6CF320D0B49C002BE66C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		73A0A02520DD91F5006A78ED /* libRNDeviceInfo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNDeviceInfo.a;
+			remoteRef = 73A0A02420DD91F5006A78ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		73A0A02720DD91F5006A78ED /* libRNDeviceInfo-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRNDeviceInfo-tvOS.a";
+			remoteRef = 73A0A02620DD91F5006A78ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1134,20 +1127,6 @@
 			fileType = archive.ar;
 			path = libRCTBlob.a;
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B6BA4DAE20DD822A0035132D /* libRCTDeviceUUID.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTDeviceUUID.a;
-			remoteRef = B6BA4DAD20DD822A0035132D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B6BA4DB120DD822A0035132D /* libSegmentAnalytics.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSegmentAnalytics.a;
-			remoteRef = B6BA4DB020DD822A0035132D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1292,16 +1271,12 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = MeetingRemoteTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1322,16 +1297,12 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = MeetingRemoteTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1348,15 +1319,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = F38D7M88E8;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = MeetingRemote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1375,14 +1343,11 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F38D7M88E8;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = MeetingRemote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1412,15 +1377,11 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = "MeetingRemote-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1451,15 +1412,11 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = "MeetingRemote-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1489,15 +1446,11 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = "MeetingRemote-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1527,15 +1480,11 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-device-uuid",
-					"$(SRCROOT)/../node_modules/react-native-segment-analytics/ios/SegmentAnalytics/Classes",
 				);
 				INFOPLIST_FILE = "MeetingRemote-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
