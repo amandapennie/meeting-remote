@@ -1,5 +1,5 @@
 {
-  "name": "GTCRemote",
+  "name": "MeetingRemote",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -18,6 +18,8 @@
     "preset": "react-native"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
+    "query-string": "6.1.0",
     "analytics-node": "^3.3.0",
     "analytics-react-native": "^1.2.0",
     "react": "16.3.1",
@@ -35,6 +37,7 @@
     "redux-actions": "^2.4.0",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
-    "tracking": "^1.1.3"
+    "rn-nodeify": "^10.0.0",
+    "url": "0.11.0"
   }
 }

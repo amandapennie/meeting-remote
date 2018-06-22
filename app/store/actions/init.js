@@ -38,6 +38,7 @@ export function start() {
       dispatch(session.setValidity(false));
     }
 
+
     dispatch(initEnd());
   };
 }

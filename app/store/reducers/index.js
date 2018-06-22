@@ -8,13 +8,15 @@ import session from './session';
 import bluetooth from './bluetooth';
 import init from './init';
 import conferenceSystems from './conferenceSystems';
+import provider from './provider';
 
 export const appReducer = combineReducers({
   routes,
   session,
   bluetooth,
   init,
-  conferenceSystems
+  conferenceSystems,
+  provider
 });
 
 export const AUTOREDUCE = 'autoreduce';

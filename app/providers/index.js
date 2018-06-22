@@ -1,0 +1,1 @@
+export gtm from './gtm';

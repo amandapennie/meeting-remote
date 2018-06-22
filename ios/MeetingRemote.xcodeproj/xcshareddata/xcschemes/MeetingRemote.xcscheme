@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "GTCRemote.app"
-               BlueprintName = "GTCRemote"
-               ReferencedContainer = "container:GTCRemote.xcodeproj">
+               BuildableName = "MeetingRemote.app"
+               BlueprintName = "MeetingRemote"
+               ReferencedContainer = "container:MeetingRemote.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "GTCRemoteTests.xctest"
-               BlueprintName = "GTCRemoteTests"
-               ReferencedContainer = "container:GTCRemote.xcodeproj">
+               BuildableName = "MeetingRemoteTests.xctest"
+               BlueprintName = "MeetingRemoteTests"
+               ReferencedContainer = "container:MeetingRemote.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "GTCRemote.app"
-            BlueprintName = "GTCRemote"
-            ReferencedContainer = "container:GTCRemote.xcodeproj">
+            BuildableName = "MeetingRemote.app"
+            BlueprintName = "MeetingRemote"
+            ReferencedContainer = "container:MeetingRemote.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "GTCRemote.app"
-            BlueprintName = "GTCRemote"
-            ReferencedContainer = "container:GTCRemote.xcodeproj">
+            BuildableName = "MeetingRemote.app"
+            BlueprintName = "MeetingRemote"
+            ReferencedContainer = "container:MeetingRemote.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -105,9 +105,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "GTCRemote.app"
-            BlueprintName = "GTCRemote"
-            ReferencedContainer = "container:GTCRemote.xcodeproj">
+            BuildableName = "MeetingRemote.app"
+            BlueprintName = "MeetingRemote"
+            ReferencedContainer = "container:MeetingRemote.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

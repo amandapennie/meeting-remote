@@ -23,6 +23,12 @@ export function getInitialState() {
       data: {}
     },
 
+    provider: {
+      currentProviderType: 'gtm',
+      authenticatedProviders: {},
+      launchRequested: false
+    },
+
     session: {
       validating: false,
       valid: false,
