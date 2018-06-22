@@ -1,9 +1,16 @@
 import Analytics from 'analytics-react-native';
+import DeviceUUID from 'react-native-device-uuid';
 
-const analytics = new Analytics(0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V);
+var anonymousId;
 
-analytics.track({
-	//userID once we create a login screen
-	event: 'UNSUPPORTED_PROVIDER_SELECTED',
-	provider: providerName,
-})
+DeviceUUID.getUUID().then((uuid) => {
+  anonymousId = uuid;
+});
+
+const analytics = new Analytics("0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V");
+
+export function track (event, params) {
+	analytics.track(
+		Object.assign({anonymousId}, {event}, params)
+	)
+}

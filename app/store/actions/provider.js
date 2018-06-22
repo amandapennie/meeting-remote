@@ -8,6 +8,7 @@ import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
 import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
+import { track } from '../../tracking';
 
 const INCLUDE_DUPES = false;
 
@@ -31,10 +32,17 @@ export const setError = createAction(constants.ERROR, undefined, (payload, meta)
 export function selectProvider(providerType) {
   return async function (dispatch, getState) {
     dispatch(providerSelected(providerType));
-    // insert tracking 
     if (isTypeSupported(providerType)) {
+      track("Provider_Selected", {
+        "provider" : "providerType",
+        "supported" : true
+      })
       dispatch(Actions.login());
     } else {
+      track("Provider_Selected", {
+        "provider" : "providerType",
+        "supported" : false
+      })
       dispatch(Actions.unsupported());
     };
   }

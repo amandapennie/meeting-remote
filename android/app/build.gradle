@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-segment-analytics')
     compile project(':react-native-ble-plx')
     compile project(':react-native-ble')
     compile fileTree(dir: "libs", include: ["*.jar"])

@@ -18,13 +18,14 @@
     "preset": "react-native"
   },
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "query-string": "6.1.0",
     "analytics-node": "^3.3.0",
     "analytics-react-native": "^1.2.0",
+    "bluebird": "^3.5.1",
+    "query-string": "6.1.0",
     "react": "16.3.1",
     "react-native": "~0.55.2",
     "react-native-ble": "^1.0.8",
+    "react-native-device-uuid": "^1.2.0",
     "react-native-easy-grid": "^0.1.17",
     "react-native-easy-listview-gridview": "^1.0.3",
     "react-native-gridview": "^0.1.2",
