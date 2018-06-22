@@ -30,18 +30,7 @@ class UnsupportedView extends React.Component {
       </View>,
     ];
   }
-
-  _onPressUnsupport = () => {
-    Alert.alert("Tracking user's click")
-    //add tracking action
-    Actions.pop()
-  }
-
-  _onPressHome = () => {
-    Actions.pop()
-  }
-
-} 
+}
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -74,7 +63,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         borderWidth: 30,
         flexWrap: 'wrap',
-        textAlign: 'center',
         justifyContent: 'center',
         backgroundColor: '#fff',
     },

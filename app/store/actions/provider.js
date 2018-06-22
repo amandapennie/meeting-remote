@@ -6,6 +6,8 @@ import Config from '../../config';
 import { Buffer } from 'buffer';
 import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
+import { isTypeSupported } from '../../providers';
+import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
 
 const INCLUDE_DUPES = false;
 
@@ -25,6 +27,18 @@ export const providerLaunchRequestEnded = createAction(constants.PROVIDER_LAUNCH
 export const providerLaunchCodeGranted = createAction(constants.PROVIDER_LAUNCH_CODE_GRANTED);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
+
+export function selectProvider(providerType) {
+  return async function (dispatch, getState) {
+    dispatch(providerSelected(providerType));
+    // insert tracking 
+    if (isTypeSupported(providerType)) {
+      dispatch(Actions.login());
+    } else {
+      dispatch(Actions.unsupported());
+    };
+  }
+}
 
 export function handleAuthResponse(providerType, access) {
   return async function (dispatch, getState) {

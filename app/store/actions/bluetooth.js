@@ -2,7 +2,6 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
-import { BleManager } from 'react-native-ble-plx';
 import Config from '../../config';
 import { Buffer } from 'buffer'
 import url from 'url';
@@ -39,20 +38,6 @@ export const peripheralConnected = createAction(constants.BLE_PERIPHERAL_CONNECT
 export const peripheralDisconnected = createAction(constants.BLE_PERIPHERAL_DISCONNECTED);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta);
 
-// const manager = new BleManager({
-//             restoreStateIdentifier: 'testBleBackgroundMode',
-//             restoreStateFunction: bleRestoredState => {
-//                 console.log(bleRestoredState)
-//             }
-//         });
-
-function deviceFound(err, device) {
-          console.log(err);
-          console.log(device);
-
-          //serviceUUIDs: []
-
-}
 
 export function scanForNewPeripherals() {
   return async function (dispatch, getState) {

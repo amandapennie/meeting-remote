@@ -18,6 +18,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
+import { types } from '../providers';
+import * as providerActions from '../store/actions/provider';
 
 
 class MainView extends React.Component {
@@ -73,27 +75,27 @@ class MainView extends React.Component {
   }
   
   _onPressGTM = () => {
-    Alert.alert('Logging into GoToMeeting')
+    this.props.selectProvider(types.gtm);
   }
 
   _onPressBlueJeans = () => {
-    Actions.unsupported()
+    this.props.selectProvider(types.bluejeans);   
   }
 
   _onPressWebex = () => {
-    Actions.unsupported()
+    this.props.selectProvider(types.webex);
   }
 
   _onPressZoom = () => {
-    Actions.unsupported()
+    this.props.selectProvider(types.zoom);
   }
 
   _onPressHangout = () => {
-    Actions.unsupported()
+    this.props.selectProvider(types.hangout);
   }
 
   _onPressSkype = () => {
-    Actions.unsupported()
+    this.props.selectProvider(types.skype);
   }
 }
 
@@ -104,6 +106,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
+    selectProvider: (providerType) => dispatch(providerActions.selectProvider(providerType))
   };
 }
 

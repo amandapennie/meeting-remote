@@ -13,7 +13,7 @@ import {
   Connected,
   Landing, 
   Login, 
-  ProviderDashboard 
+  ProviderDashboard,
   Main,
   Unsupported 
 } from './app/containers';
