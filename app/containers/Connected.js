@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 
 import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
+import * as providerActions from '../store/actions/provider';
 
 class ConnectedView extends React.Component {
   constructor(props) {
@@ -46,7 +47,13 @@ class ConnectedView extends React.Component {
 
   disconnect() {
     console.log(this.props.peripheral);
+    this.props.launchEnd();
     this.props.attemptDisconnect(this.props.peripheral, true);
+  }
+
+  sendmsg() {
+    console.log(this.props.peripheral);
+    this.props.sendMessage(this.props.peripheral, true);
   }
 
   render() {
@@ -68,6 +75,12 @@ class ConnectedView extends React.Component {
               onPress={this.disconnect.bind(this)} 
               title="Disconnect" />
         </View>
+        <View style={styles.horizontal}>
+          <Button
+              style={styles.submit}
+              onPress={this.sendmsg.bind(this)} 
+              title="Send Msg" />
+        </View>
       </View>
     );
   }
@@ -85,7 +98,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    attemptDisconnect: (p, prompt) => dispatch(bluetoothActions.attemptDisconnect(p, prompt))
+    launchEnd: () => dispatch(providerActions.providerLaunchRequestEnded()),
+    attemptDisconnect: (p, prompt) => dispatch(bluetoothActions.attemptDisconnect(p, prompt)),
+    sendMessage: (p, prompt) => dispatch(bluetoothActions.sendMessage(p, prompt))
   };
 }
 

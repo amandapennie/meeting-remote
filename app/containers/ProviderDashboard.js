@@ -16,13 +16,67 @@ import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
+import * as providerActions from '../store/actions/provider';
 
 function rowHasChanged(r1, r2) {
   // currently only care about changes to bluetooth connection
   if (r1.bluetoothConnected !== r2.bluetoothConnected) return true;
 }
 
-class ScanView extends React.Component {
+
+class MeetingListItem extends React.PureComponent {
+  _onPress = () => {
+    this.props.onPressItem(this.props.id);
+  };
+
+  render() {
+    const textColor = this.props.selected ? "red" : "black";
+    return (
+      <TouchableOpacity onPress={this._onPress}>
+        <View>
+          <Text style={{ color: textColor }}>
+            {this.props.title}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
+
+
+class MeetingSelectList extends React.PureComponent {
+  state = {selected: (new Map(): Map<string, boolean>)};
+
+  _keyExtractor = (item, index) => item.id;
+
+  _onPressItem = (id) => {
+    this.setState((state) => {
+      const selected = id;
+      return {selected};
+    });
+  };
+
+  _renderItem = ({item}) => (
+    <MeetingListItem
+      id={item.id}
+      onPressItem={this._onPressItem}
+      selected={!!this.state.selected == item.id}
+      title={item.title} />
+  );
+
+  render() {
+    return (
+      <FlatList
+        data={this.props.data}
+        extraData={this.state}
+        keyExtractor={this._keyExtractor}
+        renderItem={this._renderItem} />
+    );
+  }
+}
+
+
+class ProviderDashboardView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -33,10 +87,23 @@ class ScanView extends React.Component {
       dataSource:  ds.cloneWithRows(discoveredPeripherals),
     };
 
+
+
     if(Object.keys(this.props.bluetoothState.connectedPeripherals).length > 0){
       RouterActions.connected({type: 'replace'});
     }
 
+    console.log(this.props.providerType);
+    if(!this.props.authenticatedProviders.hasOwnProperty(this.props.providerType)){
+      RouterActions.login({type: 'replace'});
+    }
+  }
+
+  componentDidMount() {
+    // reset launch state on load
+    if(this.props.launchRequested) {
+      this.props.providerLaunchRequestEnded();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -62,13 +129,18 @@ class ScanView extends React.Component {
     this.props.stopScan();
   }
 
-  onSelectPeripheral(peripheral) {
-    this.props.associatePeripheral(peripheral);
+  startMeeting = (peripheral, meetingType, deviceType) => {
+    this.props.startMeeting({
+      providerType: this.props.providerType,
+      peripheral,
+      meetingType,
+      deviceType
+    });
   }
 
   renderConferenceSystemOption(peripheral) {
     return (
-      <TouchableOpacity onPress={() => this.onSelectPeripheral(peripheral)} key={peripheral.id} >
+      <TouchableOpacity onPress={() => this.startMeeting(peripheral, 'ad-hoc', 'gtc')} key={peripheral.id} >
         <View style={{flex: 1, flexDirection: 'row'}}>
           <View>
             <Image style={{width: 60, height: 50}} source={require('../static/monitor.png')} />
@@ -98,7 +170,6 @@ class ScanView extends React.Component {
     return (
       <View style={styles.horizontal}>
         <Button
-            disabled={bluetoothHardwareState != 'poweredOn'}
             style={styles.submit}
             onPress={this.beginScan.bind(this)} 
             title="Scan for Rooms" />
@@ -107,7 +178,21 @@ class ScanView extends React.Component {
   }
 
   render() {
-    const { bluetoothState } = this.props;
+    const { bluetoothState, launchRequested } = this.props;
+
+    if(launchRequested) {
+      return (
+        <View style={styles.container}>
+          <View>
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+          <View>
+            <Text>Lauching Meeting...</Text>
+          </View>
+        </View>
+      );
+    }
+
     const button = (bluetoothState.scanning) ? this.renderStopScanningButton() : this.renderScanningButton(bluetoothState.bluetoothHardwareState);
     return (
       <View style={styles.container}>
@@ -127,8 +212,13 @@ class ScanView extends React.Component {
 function mapStateToProps(state, ownProps) {
   const scene = ownProps.navigationState;
 
+  console.log(state.provider);
+
   const bluetoothState = state.bluetooth;
   return {
+    providerType: state.provider.currentProviderType,
+    launchRequested: state.provider.launchRequested,
+    authenticatedProviders: state.provider.authenticatedProviders,
     bluetoothState
   };
 }
@@ -136,16 +226,18 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    associatePeripheral: peripheral => dispatch(bluetoothActions.associatePeripheral(peripheral)),
+    startMeeting: (options) => dispatch(providerActions.startMeeting(options)),
+    providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
+    providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
     scanForNewPeripherals: () => dispatch(bluetoothActions.scanForNewPeripherals()),
     stopScan: () => dispatch(bluetoothActions.stopScan())
   };
 }
 
 
-const Scan = connect(mapStateToProps, mapDispatchToProps)(ScanView);
+const ProviderDashboard = connect(mapStateToProps, mapDispatchToProps)(ProviderDashboardView);
 
-export { Scan };
+export { ProviderDashboard };
 
 
 const styles = StyleSheet.create({

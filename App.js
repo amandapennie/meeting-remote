@@ -1,3 +1,4 @@
+import './shim.js'
 import React from 'react';
 import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
 import { connect, Provider } from 'react-redux';
@@ -12,15 +13,17 @@ import {
   Connected,
   Landing, 
   Login, 
-  Scan 
+  ProviderDashboard 
 } from './app/containers';
+
+//      <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
 
 const scenes = Actions.create(
   <Scene key="root">
-      <Scene key="landing" component={Landing} hideNavBar={true} title="Landing"/>
-      <Scene key="scan" component={Scan} hideNavBar={true} title="Scan"/>
-      <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
+      <Scene key="providerDashboard" component={ProviderDashboard} hideNavBar={true} title="ProviderDashboard"/>
       <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
+      <Scene key="landing" component={Landing} hideNavBar={true} title="Landing"/>
+      <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
   </Scene>
 );
 
@@ -35,19 +38,6 @@ class Routes extends React.Component {
 
 const RouterWithRedux = connect()(Routes);
 
-//export default Login;
-// export default class Application extends React.Component {
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text>Open up App.js to start working on your app!</Text>
-//         <Text>Changes you make will automatically reload.</Text>
-//         <Text>Shake your phone to open the developer menu.</Text>
-//       </View>
-//     );
-//   }
-// }
-
 export default class Application extends React.Component {
   render() {
     return (
@@ -59,12 +49,3 @@ export default class Application extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
