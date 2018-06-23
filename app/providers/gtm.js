@@ -1,15 +1,10 @@
 import bluebird from 'bluebird';
+import url from 'url';
 
 
 function getAdHocGtmLauchUrl(access) {
 	return new bluebird.Promise((resolve, reject) => {
 		var meetingId;
-		const headers = {
-			'Content-Type': 'application/json',
-			'Accept': 'application/json',
-	        'User-Agent': 'Meeting-Remote',
-	        'Authorization': `OAuth oauth_token=${access.access_token}`
-	    };
 
 		createMeetingApiCall(access)
 		.then((createResp) => {
@@ -79,7 +74,7 @@ function createMeetingApiCall(access) {
 			    conferencecallinfo: "Hybrid",
 			    timezonekey: "",
 			    meetingtype: "immediate"
-		  }),
+		  })
 		})
 		.then((response) => {
 			console.log(response);
@@ -94,6 +89,92 @@ function createMeetingApiCall(access) {
   });
 };
 
+function deleteMeeting(access, meetingId) {
+  return new bluebird.Promise(function(resolve, reject) {
+  	    const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'User-Agent': 'Meeting-Remote',
+			'Authorization': `OAuth oauth_token=${access.access_token}`
+		};
+
+  		fetch(`https://api.getgo.com/G2M/rest/meetings/${meetingId}`, {
+		  method: 'DELETE',
+		  headers
+		})
+		.then(() => {
+	      return resolve();
+	    })
+	    .catch((err) => {
+	    	reject(err);
+	    });
+  });
+}
+
+function loadUpcomingMeetings(access) {
+	return new bluebird.Promise(function(resolve, reject) {
+		const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'User-Agent': 'Meeting-Remote',
+			'Authorization': `OAuth oauth_token=${access.access_token}`
+		};
+
+		fetch("https://api.getgo.com/G2M/rest/upcomingMeetings", {
+		  method: 'GET',
+		  headers,
+		})
+		.then((response) => {
+			return response.json()
+		})
+		.then((upcomingResp) => {
+	      return resolve(upcomingResp);
+	    })
+	    .catch((err) => {
+	    	reject(err);
+	    });
+  });
+}
+
+
+function getProfileInformation(access) {
+	// this function is kind of a cheat
+	// since the public goto api api.getgo.com does not have a profile method
+	// we get a start url, which give us a temporary access token
+	// and we use that token against the private profile api
+	return new bluebird.Promise(function(resolve, reject) {
+		var meetingId;
+		getAdHocGtmLauchUrl(access)
+		.then((resp) => {
+			meetingId = resp.meetingId;
+			const queryData = url.parse(resp.hostUrl, true).query;
+	        const token = queryData.authenticationToken;
+
+	        const headers = {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json',
+				'Authorization': `Bearer ${token}`
+			};
+
+	  		fetch('https://apiglobal.gotomeeting.com/rest/2/profile', {
+			  method: 'GET',
+			  headers
+			})
+			.then((response) => {
+				return response.json()
+			})
+			.then((profileResp) => {
+			  deleteMeeting(access, meetingId);
+		      return resolve(profileResp);
+		    })
+		    .catch((err) => {
+		    	reject(err);
+		    });
+		});
+	});
+}
+
 export default {
-	getAdHocGtmLauchUrl
+	getAdHocGtmLauchUrl,
+	getProfileInformation
 }

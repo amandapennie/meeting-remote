@@ -28,6 +28,14 @@ export default handleActions(
 
     [actions.constants.PROVIDER_LAUNCH_CODE_GRANTED]: (state, action) => {
       return Object.assign({}, state, {launchData: action.payload});
+    },
+
+    [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED]: (state, action) => {
+      const providersByType = {};
+      providersByType[action.payload.providerType] = action.payload.providerAuth;
+      
+      const newData = Object.assign({}, state.authenticatedProviders, providersByType);
+      return Object.assign({}, state, {authenticatedProviders: newData});
     }
 
   },

@@ -18,61 +18,11 @@ import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
 
+import MeetingChoicesView from '../components/ProviderDashboard/MeetingChoices';
+
 function rowHasChanged(r1, r2) {
   // currently only care about changes to bluetooth connection
   if (r1.bluetoothConnected !== r2.bluetoothConnected) return true;
-}
-
-
-class MeetingListItem extends React.PureComponent {
-  _onPress = () => {
-    this.props.onPressItem(this.props.id);
-  };
-
-  render() {
-    const textColor = this.props.selected ? "red" : "black";
-    return (
-      <TouchableOpacity onPress={this._onPress}>
-        <View>
-          <Text style={{ color: textColor }}>
-            {this.props.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
-
-
-class MeetingSelectList extends React.PureComponent {
-  state = {selected: (new Map(): Map<string, boolean>)};
-
-  _keyExtractor = (item, index) => item.id;
-
-  _onPressItem = (id) => {
-    this.setState((state) => {
-      const selected = id;
-      return {selected};
-    });
-  };
-
-  _renderItem = ({item}) => (
-    <MeetingListItem
-      id={item.id}
-      onPressItem={this._onPressItem}
-      selected={!!this.state.selected == item.id}
-      title={item.title} />
-  );
-
-  render() {
-    return (
-      <FlatList
-        data={this.props.data}
-        extraData={this.state}
-        keyExtractor={this._keyExtractor}
-        renderItem={this._renderItem} />
-    );
-  }
 }
 
 
@@ -96,6 +46,8 @@ class ProviderDashboardView extends React.Component {
     console.log(this.props.providerType);
     if(!this.props.authenticatedProviders.hasOwnProperty(this.props.providerType)){
       RouterActions.login({type: 'replace'});
+    }else{
+      this.props.loadUpcomingMeetings(this.props.providerType);
     }
   }
 
@@ -178,7 +130,7 @@ class ProviderDashboardView extends React.Component {
   }
 
   render() {
-    const { bluetoothState, launchRequested } = this.props;
+    const { bluetoothState, launchRequested, profile } = this.props;
 
     if(launchRequested) {
       return (
@@ -192,10 +144,17 @@ class ProviderDashboardView extends React.Component {
         </View>
       );
     }
-
+    console.log(profile);
     const button = (bluetoothState.scanning) ? this.renderStopScanningButton() : this.renderScanningButton(bluetoothState.bluetoothHardwareState);
     return (
       <View style={styles.container}>
+        <View>
+          {profile.avatarUrl && <Image style={{width: 40, height: 40}} source={{uri: profile.avatarUrl }} /> }
+          <Text>Hello {profile.name}</Text>
+        </View>
+        <View>
+          <MeetingChoicesView />
+        </View>
         <View>
           { button }
         </View>
@@ -215,11 +174,14 @@ function mapStateToProps(state, ownProps) {
   console.log(state.provider);
 
   const bluetoothState = state.bluetooth;
+  const currentProviderType = state.provider.currentProviderType;
+  const profile = state.provider.authenticatedProviders[currentProviderType].profile;
   return {
     providerType: state.provider.currentProviderType,
     launchRequested: state.provider.launchRequested,
     authenticatedProviders: state.provider.authenticatedProviders,
-    bluetoothState
+    bluetoothState,
+    profile
   };
 }
 
@@ -227,6 +189,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     startMeeting: (options) => dispatch(providerActions.startMeeting(options)),
+    loadUpcomingMeetings: (providerType) => dispatch(providerActions.loadUpcomingMeetings(providerType)),
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
     providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
     scanForNewPeripherals: () => dispatch(bluetoothActions.scanForNewPeripherals()),
@@ -249,7 +212,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingBottom: 30,
-    marginTop: 100
+    marginTop: 50
   },
   horizontal: {
     flexDirection: 'row',
