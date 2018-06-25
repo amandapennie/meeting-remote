@@ -30,6 +30,7 @@
     "react-native-easy-grid": "^0.1.17",
     "react-native-easy-listview-gridview": "^1.0.3",
     "react-native-gridview": "^0.1.2",
+    "react-native-linear-gradient": "^2.4.0",
     "react-native-modal": "^6.1.0",
     "react-native-modalbox": "^1.5.0",
     "react-native-router-flux": "^4.0.0-beta.31",

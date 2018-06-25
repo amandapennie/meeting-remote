@@ -41,9 +41,6 @@ export const setError = createAction(constants.ERROR, undefined, (payload, meta)
 
 export function scanForNewPeripherals() {
   return async function (dispatch, getState) {
-
-
-
     
     // ... work with BLE manager ...
 
@@ -71,10 +68,16 @@ export function scanForNewPeripherals() {
       console.log(peripheralInstance);
       console.log(peripheral);
 
-      const serviceUuid = peripheralInstance.advertisement.serviceUuids[0];
-      if(!serviceUuid.startsWith("c578000f18f7")) {
+      var serviceUuid; 
+      if(peripheralInstance.advertisement.serviceUuids){
+        serviceUuid = peripheralInstance.advertisement.serviceUuids[0];;
+        if(!serviceUuid.startsWith("c578000f18f7")) {
+          return;
+        }
+      }else{
         return;
       }
+      
       const hexRoomName = serviceUuid.substr(serviceUuid.length - 20);
       const roomName = Buffer.from(hexRoomName, 'hex').toString('utf8');
       peripheralInstance.advertisement.serviceUuids 

@@ -11,9 +11,6 @@ export function bluetoothMiddleware(store) {
 				case initActions.INIT_START:
 					initBluetooth(store);
 					break;
-				case conferenceSystemsActions.INSERT:
-					action.payload = setBleConnected(action.payload, store);
-					break;
 			}
 			next(action);
 		}
@@ -25,17 +22,4 @@ function initBluetooth(store) {
 	noble.on('stateChange', function(bluetoothHardwareState) {
 		store.dispatch(hardwareStateUpdate(bluetoothHardwareState));
 	});
-}
-
-// set ConferenceSystem.bluetoothConnected based off currently connected peripherals
-function setBleConnected(conferenceSystems, store) {
-	const keys = Object.keys(store.bluetooth.connectedPeripherals);
-	for(var i=0;i<conferenceSystems.length;i++){
-		let conferenceSystem = conferenceSystems[i];
-		if(conferenceSystem.isConnectedJacket == 'true') {
-			conferenceSystem.bluetoothConnected = keys.indexOf(conferenceSystem.peripheralId) > -1;
-			conferenceSystems[i] = conferenceSystem;
-		}
-	}
-	return conferenceSystems;
 }

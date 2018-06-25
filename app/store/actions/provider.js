@@ -4,6 +4,7 @@ import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
 import Config from '../../config';
 import { Buffer } from 'buffer';
+import { Actions as RouterActions } from 'react-native-router-flux';
 import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
@@ -18,6 +19,12 @@ export const constants = {
   PROVIDER_LAUNCH_REQUESTED: 'PROVIDER_LAUNCH_REQUESTED', 
   PROVIDER_LAUNCH_REQUEST_ENDED: 'PROVIDER_LAUNCH_REQUEST_ENDED',
   PROVIDER_LAUNCH_CODE_GRANTED: 'PROVIDER_LAUNCH_CODE_GRANTED', 
+  PROVIDER_LOAD_UPCOMING_MTGS_START: 'PROVIDER_LOAD_UPCOMING_MTGS_START',
+  PROVIDER_LOAD_UPCOMING_MTGS_ENDED: 'PROVIDER_LOAD_UPCOMING_MTGS_ENDED',
+  PROVIDER_LOAD_UPCOMING_MTGS_ERROR: 'PROVIDER_LOAD_UPCOMING_MTGS_ERROR',
+  PROVIDER_SESSION_KILL_REQUESTED: 'PROVIDER_SESSION_KILL_REQUESTED',
+  PROVIDER_SESSION_KILLED: 'PROVIDER_SESSION_KILLED',
+  PROVIDER_SESSION_KILL_ERROR: 'PROVIDER_SESSION_KILL_ERROR',
   ERROR: 'autoreduce provider/ERROR',
 };
 
@@ -26,6 +33,12 @@ export const providerAuthReceived = createAction(constants.PROVIDER_AUTH_RECEIVE
 export const providerLaunchRequested = createAction(constants.PROVIDER_LAUNCH_REQUESTED);
 export const providerLaunchRequestEnded = createAction(constants.PROVIDER_LAUNCH_REQUEST_ENDED);
 export const providerLaunchCodeGranted = createAction(constants.PROVIDER_LAUNCH_CODE_GRANTED);
+export const providerLoadUpcomingMtgsStart = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_START);
+export const providerLoadUpcomingMtgsEnded = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED);
+export const providerLoadUpcomingMtgsError = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_ERROR);
+export const providerSessionKillRequested = createAction(constants.PROVIDER_SESSION_KILL_REQUESTED);
+export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KILLED);
+export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
 
@@ -50,13 +63,17 @@ export function selectProvider(providerType) {
 
 export function handleAuthResponse(providerType, access) {
   return async function (dispatch, getState) {
-  	  const profile = {
+  	  const oauthProfile = {
   	  	firstName: access.firstName,
   	  	lastName: access.lastName,
   	  	email: access.email
   	  };
-      const providerAuth = {access, profile};
-      dispatch(providerAuthReceived({providerType, providerAuth}));
+
+      gtm.getProfileInformation(access)
+      .then((gtmProfile) => {
+        const providerAuth = {access, profile: Object.assign(oauthProfile, gtmProfile)};
+        dispatch(providerAuthReceived({providerType, providerAuth}));
+      });
   }
 }
 
@@ -74,5 +91,47 @@ export function startMeeting(options) {
       .catch((err) => {
         console.log(err);
       });
+  }
+}
+
+export function endMeeting(options) {
+  return async function (dispatch, getState) {
+      const {providerType, peripheral, meetingId} = options;
+      dispatch(providerSessionKillRequested({providerType, meetingId}));
+      const {access} = getState().provider.authenticatedProviders[providerType];
+      console.log('in kill')
+      console.log(peripheral);
+      console.log(meetingId);
+      dispatch(bluetoothActions.attemptDisconnect(peripheral, true));
+      //only supports gtm for now
+      gtm.killSession(access, meetingId)
+      .then((resp) => {
+        dispatch(providerSessionKilled({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+      })
+      .catch((err) => {
+        dispatch(providerSessionKillError(err));
+        console.log(err);
+      });
+  }
+}
+
+export function loadUpcomingMeetings(providerType) {
+  return async function (dispatch, getState) {
+    if(providerType != 'gtm') {
+      throw "unknown provider";
+    }
+
+    const state = getState();
+    const access = state.provider.authenticatedProviders[providerType].access;
+
+    dispatch(providerLoadUpcomingMtgsStart({providerType}));
+
+    gtm.loadUpcomingMeetings(access)
+    .then((upcomingMeetings) => {
+      dispatch(providerLoadUpcomingMtgsEnded({providerType, upcomingMeetings}));
+    })
+    .catch((err) => {
+      dispatch(providerLoadUpcomingMtgsError(err));
+    })
   }
 }

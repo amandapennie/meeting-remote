@@ -5,8 +5,11 @@ const analytics = new Analytics("0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V");
 
 export const DEVICE_ID = DeviceInfo.getUniqueID();
 
-export function track (event, properties) {
-	analytics.track(
-		Object.assign({anonymousId: DEVICE_ID}, {event}, {properties: properties})
-	)
+//https://segment.com/docs/sources/server/node/#track
+export function track(event, properties) {
+	analytics.track({
+		anonymousId: DEVICE_ID,
+		event, 
+		properties
+	});
 }

@@ -25,49 +25,43 @@ import * as providerActions from '../store/actions/provider';
 class MainView extends React.Component {
   render() {
     return [
-      <View style={styles.title}>,
-      <Text style={styles.titleText}> Meeting Remote </Text>, 
-      <Text style={styles.subText}> Choose your provider </Text>,
+      <View style={styles.title} key="title">
+        <Text style={styles.titleText} > Meeting Remote </Text>
+        <Text style={styles.subText}> Choose your provider </Text>
       </View>,
       <View style={styles.container}>,
         <View>
         <TouchableOpacity onPress={this._onPressGTM} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/gtmw.png')}
-          />      
+            source={require('./logos/gtmw.png')} />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressBlueJeans} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/bluejeansw.png')}
-          />      
+            source={require('./logos/bluejeansw.png')} />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressHangout} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/hangoutw.png')}
-          />      
+            source={require('./logos/hangoutw.png')} />      
         </TouchableOpacity>
         </View>
         <View>
         <TouchableOpacity onPress={this._onPressZoom} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/zoomw.png')}
-          />      
+            source={require('./logos/zoomw.png')} />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressWebex} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/webexw.png')}
-          />      
+            source={require('./logos/webexw.png')} />      
         </TouchableOpacity>
         <TouchableOpacity onPress={this._onPressSkype} style={ styles.touch }>
           <Image
             style={ styles.button }
-            source={require('./logos/skypew.png')}
-          />      
+            source={require('./logos/skypew.png')} />      
         </TouchableOpacity>
         </View>
       </View>
