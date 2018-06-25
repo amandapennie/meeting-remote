@@ -22,14 +22,14 @@ class MeetingListItem extends React.PureComponent {
   };
 
   render() {
-    const textColor = this.props.selected ? "red" : "black";
+    const textColor = this.props.selected ? "#fa7c2d" : "#cfdaee";
 
     if(this.props.id == "profileId") {
       return (
         <TouchableOpacity onPress={this._onPress}>
           <View style={{padding: 15}}>
             <Text style={{ color: textColor }}>
-              Personal Code: {this.props.title}
+               Personal Code: {this.props.title}
             </Text>
           </View>
         </TouchableOpacity>
@@ -83,9 +83,12 @@ class MeetingSelectList extends React.PureComponent {
 export default class MeetingChoicesView extends React.Component {
   render() {
     return (
-      <View>
-        <Text>Choose a meeting</Text>
-        <MeetingSelectList data={[{id: 'profileId', title: 'BostonSully'}]} />
+      <View style={{flex: 1}}>
+        <Text style={{color: "#cfdaee", marginLeft: 10, fontSize: 18}}>Choose your meeting:</Text>
+        <MeetingSelectList data={[
+          {id: 'profileId', title: 'BostonSully'},
+          {id: 123456789, title: 'Daily Standup @ 10:10am'}
+        ]} />
       </View> 
     );
   }

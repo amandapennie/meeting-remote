@@ -51,6 +51,15 @@ class ConnectedView extends React.Component {
     this.props.attemptDisconnect(this.props.peripheral, true);
   }
 
+  endMeeting() {
+    console.log(this.props);
+    this.props.endMeeting({
+      providerType: this.props.providerType,
+      periheral: this.props.peripheral,
+      meetingId: this.props.meetingId
+    });
+  }
+
   sendmsg() {
     console.log(this.props.peripheral);
     this.props.sendMessage(this.props.peripheral, true);
@@ -81,6 +90,12 @@ class ConnectedView extends React.Component {
               onPress={this.sendmsg.bind(this)} 
               title="Send Msg" />
         </View>
+        <View style={styles.horizontal}>
+          <Button
+              style={styles.submit}
+              onPress={this.endMeeting.bind(this)} 
+              title="End Meeting" />
+        </View>
       </View>
     );
   }
@@ -89,9 +104,12 @@ class ConnectedView extends React.Component {
 function mapStateToProps(state, ownProps) {
   const bluetoothState = state.bluetooth;
   const peripheral = bluetoothState.connectedPeripherals[Object.keys(bluetoothState.connectedPeripherals)[0]];
+  const meetingId = (state.provider.launchData) ? state.provider.launchData.meetingId : null;
   return {
     bluetoothState,
-    peripheral
+    peripheral,
+    providerType: state.provider.currentProviderType,
+    meetingId: meetingId
   };
 }
 
@@ -100,6 +118,7 @@ function mapDispatchToProps(dispatch, ownProps) {
   return {
     launchEnd: () => dispatch(providerActions.providerLaunchRequestEnded()),
     attemptDisconnect: (p, prompt) => dispatch(bluetoothActions.attemptDisconnect(p, prompt)),
+    endMeeting: (options) => dispatch(providerActions.endMeeting(options)),
     sendMessage: (p, prompt) => dispatch(bluetoothActions.sendMessage(p, prompt))
   };
 }

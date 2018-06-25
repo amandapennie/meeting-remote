@@ -21,7 +21,10 @@ export const constants = {
   PROVIDER_LAUNCH_CODE_GRANTED: 'PROVIDER_LAUNCH_CODE_GRANTED', 
   PROVIDER_LOAD_UPCOMING_MTGS_START: 'PROVIDER_LOAD_UPCOMING_MTGS_START',
   PROVIDER_LOAD_UPCOMING_MTGS_ENDED: 'PROVIDER_LOAD_UPCOMING_MTGS_ENDED',
-  PROVIDER_LOAD_UPCOMING_MTGS_ERROR: 'PROVIDER_LOAD_UPCOMING_MTGS_ERROR'
+  PROVIDER_LOAD_UPCOMING_MTGS_ERROR: 'PROVIDER_LOAD_UPCOMING_MTGS_ERROR',
+  PROVIDER_SESSION_KILL_REQUESTED: 'PROVIDER_SESSION_KILL_REQUESTED',
+  PROVIDER_SESSION_KILLED: 'PROVIDER_SESSION_KILLED',
+  PROVIDER_SESSION_KILL_ERROR: 'PROVIDER_SESSION_KILL_ERROR',
   ERROR: 'autoreduce provider/ERROR',
 };
 
@@ -33,6 +36,9 @@ export const providerLaunchCodeGranted = createAction(constants.PROVIDER_LAUNCH_
 export const providerLoadUpcomingMtgsStart = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_START);
 export const providerLoadUpcomingMtgsEnded = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED);
 export const providerLoadUpcomingMtgsError = createAction(constants.PROVIDER_LOAD_UPCOMING_MTGS_ERROR);
+export const providerSessionKillRequested = createAction(constants.PROVIDER_SESSION_KILL_REQUESTED);
+export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KILLED);
+export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
 
@@ -83,6 +89,27 @@ export function startMeeting(options) {
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       })
       .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+export function endMeeting(options) {
+  return async function (dispatch, getState) {
+      const {providerType, peripheral, meetingId} = options;
+      dispatch(providerSessionKillRequested({providerType, meetingId}));
+      const {access} = getState().provider.authenticatedProviders[providerType];
+      console.log('in kill')
+      console.log(peripheral);
+      console.log(meetingId);
+      dispatch(bluetoothActions.attemptDisconnect(peripheral, true));
+      //only supports gtm for now
+      gtm.killSession(access, meetingId)
+      .then((resp) => {
+        dispatch(providerSessionKilled({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+      })
+      .catch((err) => {
+        dispatch(providerSessionKillError(err));
         console.log(err);
       });
   }

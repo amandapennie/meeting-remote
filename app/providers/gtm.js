@@ -136,9 +136,8 @@ function loadUpcomingMeetings(access) {
   });
 }
 
-
-function getProfileInformation(access) {
-	// this function is kind of a cheat
+function getAccessJwt(access) {
+	// this function is a cheat
 	// since the public goto api api.getgo.com does not have a profile method
 	// we get a start url, which give us a temporary access token
 	// and we use that token against the private profile api
@@ -148,12 +147,82 @@ function getProfileInformation(access) {
 		.then((resp) => {
 			meetingId = resp.meetingId;
 			const queryData = url.parse(resp.hostUrl, true).query;
-	        const token = queryData.authenticationToken;
+	        const jwt = queryData.authenticationToken;
 
+	        deleteMeeting(access, meetingId);
+		    return resolve(jwt);
+		})
+		.catch((err) => {
+	    	reject(err);
+	    });;
+	});	
+}
+
+function getScreensharingData(jwt, meetingId) {
+	return new bluebird.Promise(function(resolve, reject) {
+		const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${jwt}`
+		};
+  		fetch(`https://apiglobal.gotomeeting.com/rest/2/meetings/${meetingId}/session/screensharing`, {
+		  method: 'GET',
+		  headers
+		})
+		.then((response) => {
+			console.log(response);
+			return response.json()
+		})
+		.then((sessionScreensharingResp) => {
+	      return resolve(sessionScreensharingResp);
+	    })
+	    .catch((err) => {
+	    	reject(err);
+	    });
+	});
+}
+
+function killSession(access, meetingId) {
+	return new bluebird.Promise(function(resolve, reject) {
+		var jwt;
+		getAccessJwt(access)
+		.then((jwtResp) => {
+			jwt = jwtResp;
+			return getScreensharingData(jwt, meetingId);
+		})
+		.then((screenshareResp) => {
+			console.log('delegationToken');
+			console.log(screenshareResp.delegationToken);
 	        const headers = {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
-				'Authorization': `Bearer ${token}`
+				'Authorization': `Delegation ${screenshareResp.delegationToken}`
+			};
+			console.log('about to kill');
+	  		fetch(`https://apiglobal.gotomeeting.com/rest/2/meetings/${meetingId}/session`, {
+			  method: 'DELETE',
+			  headers
+			})
+			.then((response) => {
+				console.log(response);
+				return resolve();
+			})
+		    .catch((err) => {
+		    	reject(err);
+		    });
+		});
+	});
+}
+
+
+function getProfileInformation(access) {
+	return new bluebird.Promise(function(resolve, reject) {
+		getAccessJwt(access)
+		.then((jwt) => {
+	        const headers = {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json',
+				'Authorization': `Bearer ${jwt}`
 			};
 
 	  		fetch('https://apiglobal.gotomeeting.com/rest/2/profile', {
@@ -164,7 +233,6 @@ function getProfileInformation(access) {
 				return response.json()
 			})
 			.then((profileResp) => {
-			  deleteMeeting(access, meetingId);
 		      return resolve(profileResp);
 		    })
 		    .catch((err) => {
@@ -176,5 +244,7 @@ function getProfileInformation(access) {
 
 export default {
 	getAdHocGtmLauchUrl,
-	getProfileInformation
+	getProfileInformation,
+	loadUpcomingMeetings,
+	killSession
 }

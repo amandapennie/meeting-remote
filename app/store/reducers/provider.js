@@ -33,7 +33,6 @@ export default handleActions(
     [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED]: (state, action) => {
       const providersByType = {};
       providersByType[action.payload.providerType] = action.payload.providerAuth;
-      
       const newData = Object.assign({}, state.authenticatedProviders, providersByType);
       return Object.assign({}, state, {authenticatedProviders: newData});
     }
