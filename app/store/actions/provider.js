@@ -87,6 +87,7 @@ export function startMeeting(options) {
       .then((resp) => {
         dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
+        dispatch(Actions.session());
       })
       .catch((err) => {
         console.log(err);

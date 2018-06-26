@@ -15,7 +15,8 @@ import {
   Login, 
   ProviderDashboard,
   Main,
-  Unsupported 
+  Unsupported,
+  Session
 } from './app/containers';
 
 //      <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
@@ -28,6 +29,7 @@ const scenes = Actions.create(
       <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
       <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
       <Scene key="unsupported" component={Unsupported} hideNavBar={false} title="Unsupported"/>
+      <Scene key="session" component={Session} hideNavBar={true} title="Session"/>
   </Scene>
 );
 
