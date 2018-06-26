@@ -8,7 +8,7 @@ const initialState = getInitialState().routes;
 // https://github.com/aksonov/react-native-router-flux/blob/master/docs/REDUX_FLUX.md
 export default handleActions(
   {
-    [ActionConst.FOCUS]: (state, action) => Object.assign({}, state, { scene: action.scene }),
+    [ActionConst.FOCUS]: (state, action) => Object.assign({}, state, { scene: action.payload }),
   },
   initialState
 );

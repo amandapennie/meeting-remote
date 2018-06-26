@@ -18,8 +18,6 @@ import {
   Unsupported 
 } from './app/containers';
 
-//      <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
-
 const scenes = Actions.create(
   <Scene key="root">
       <Scene key="landing" component={Landing} hideNavBar={true} title="Landing"/>
@@ -34,8 +32,7 @@ const scenes = Actions.create(
 class Routes extends React.Component {
   render() {
     return (
-      <Router
-        scenes={ scenes } />
+      <Router scenes={ scenes } />
     );
   }
 }
