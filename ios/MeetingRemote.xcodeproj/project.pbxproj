@@ -1451,6 +1451,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GFNFVT632V;
@@ -1467,6 +1468,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
 				PRODUCT_NAME = MeetingRemote;
+				PROVISIONING_PROFILE = "4740e01c-7c67-4eec-8f6c-974a70136ddb";
 				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1647,6 +1649,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1681,6 +1684,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
