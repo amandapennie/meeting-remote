@@ -1378,7 +1378,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote2;
 				PRODUCT_NAME = MeetingRemote;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1402,7 +1402,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote2;
 				PRODUCT_NAME = MeetingRemote;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

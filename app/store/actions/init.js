@@ -28,7 +28,7 @@ export function start() {
     //   isLoggedIn = await xively.comm.checkJwt();
     // } catch(e) {}
 
-    RouterActions.main({type: 'replace'});
+    RouterActions.session({type: 'replace'});
 
     if (isLoggedIn) {
       dispatch(session.setValidity(true));
