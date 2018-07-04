@@ -38,17 +38,15 @@ class LandingView extends React.Component {
   render() {
     const { isInitializing, isLoggedIn } = this.props;
 
-    if (isInitializing || isLoggedIn) {
+    if (isInitializing) {
       return (
-        <View style={styles.container}>
-          <StatusBar hidden={true}/>
+        <View style={[styles.container, {backgroundColor:'#3b3b3c'}]}>
         </View>
       );
     }
 
     return (
-      <View style={styles.container}>
-        <StatusBar hidden={true}/>
+      <View style={[styles.container, {backgroundColor:'#3b3b3c'}]}>
         <Text>Should do something here</Text>
       </View>
     );

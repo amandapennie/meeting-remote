@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
-import Config from 'react-native-config'
+import { BLE_CONF_SYSTEM_SERVICE_ID } from 'react-native-dotenv';
 import { Buffer } from 'buffer'
 import url from 'url';
 
@@ -266,7 +266,7 @@ function _scanForPeripheralId(peripheralId, callback, timeout) {
   });
 
   noble.startScanning(
-    [Config.BLE_CONF_SYSTEM_SERVICE_ID], 
+    [BLE_CONF_SYSTEM_SERVICE_ID], 
     INCLUDE_DUPES, 
     (err) => { 
       if(!err){
