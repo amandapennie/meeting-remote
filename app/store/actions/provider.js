@@ -2,7 +2,6 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
-import Config from '../../config';
 import { Buffer } from 'buffer';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import * as bluetoothActions from './bluetooth';

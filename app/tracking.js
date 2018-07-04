@@ -1,7 +1,8 @@
+import Config from 'react-native-config'
 import Analytics from 'analytics-react-native';
 import DeviceInfo from 'react-native-device-info';
 
-const analytics = new Analytics("0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V");
+const analytics = new Analytics(Config.SEGMENT_WRITE_KEY);
 
 export const DEVICE_ID = DeviceInfo.getUniqueID();
 
