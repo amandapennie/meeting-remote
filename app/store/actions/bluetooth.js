@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
-import Config from '../../config';
+import { BLE_CONF_SYSTEM_SERVICE_ID } from 'react-native-dotenv';
 import { Buffer } from 'buffer'
 import url from 'url';
 
@@ -41,36 +41,15 @@ export const setError = createAction(constants.ERROR, undefined, (payload, meta)
 
 export function scanForNewPeripherals() {
   return async function (dispatch, getState) {
-    
-    // ... work with BLE manager ...
-
-    // 9c247634-e8ec-47dc-a805-1995bc7e233d
-    // c578000f-18f7-4db7-b03b-75ef65007548
-
-    // manager.onStateChange((s) => {
-    //   console.log('new state');
-    //   console.log(s);
-    // }, true);
-
-    //"c578000f-18f7-4db7-b03b-75ef65007548"
-
-    //manager.startDeviceScan([], {allowDuplicates: false}, deviceFound);
-
-
-
-
-
-
     noble.on('discover', function(peripheralInstance) {
       // cannot store Peripheral instance in AppState, need to convert to simple object
       // noble will hold onto the proper Peripheral instance
       let peripheral = JSON.parse(peripheralInstance.toString());
-      console.log(peripheralInstance);
-      console.log(peripheral);
+      //console.log(peripheral);
 
       var serviceUuid; 
       if(peripheralInstance.advertisement.serviceUuids){
-        serviceUuid = peripheralInstance.advertisement.serviceUuids[0];;
+        serviceUuid = peripheralInstance.advertisement.serviceUuids[0];
         if(!serviceUuid.startsWith("c578000f18f7")) {
           return;
         }
@@ -86,15 +65,9 @@ export function scanForNewPeripherals() {
         serviceUuids: peripheralInstance.advertisement.serviceUuids
       };
 
-      // peripheralInstance.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
-      //     if(error) {
-      //       console.log(error);
-      //     }
-      //     console.log(services);
-      //     console.log(characteristics);
-      //   });
-
       dispatch(peripheralDiscovered(peripheral));
+
+      //console.log(noble._peripherals);
     });
 
   	noble.startScanning(
@@ -145,6 +118,8 @@ export function attemptConnect(peripheral, noPrompt) {
 
         const { launchData } = getState().provider;
 
+        console.log("do we have data")
+        console.log(launchData);
         if(launchData) {
           // gtm specific code
           console.log('connected now sending launch data');
@@ -170,7 +145,12 @@ export function attemptConnect(peripheral, noPrompt) {
     }
 
     function findInstanceAndConnect(){
+      console.log(peripheral);
+      console.log(peripheral.id);
+      console.log(noble._peripherals);
       const peripheralInstance = noble._peripherals[peripheral.id];
+      console.log("insidee heeeer")
+      console.log(peripheralInstance);
       if(!peripheralInstance) {
         _scanForPeripheralId(peripheral.id, (err, foundPeripheral) => {
           if(!err && foundPeripheral) {
@@ -246,8 +226,7 @@ export function sendMessage(peripheral, message) {
           console.log(error);
         }
         const characteristic = characteristics[0];
-        console.log('on before send')
-        characteristic.write(Buffer.from(message, 'utf8'), false, (error) => console.log(error));
+        characteristic.write(Buffer.from(message, 'utf8'), false, (error) => {if(error){console.log(error)} } );
 
       });
   };
@@ -287,7 +266,7 @@ function _scanForPeripheralId(peripheralId, callback, timeout) {
   });
 
   noble.startScanning(
-    [Config.ble.conferenceSystemServiceUuid], 
+    [BLE_CONF_SYSTEM_SERVICE_ID], 
     INCLUDE_DUPES, 
     (err) => { 
       if(!err){

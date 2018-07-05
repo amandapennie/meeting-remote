@@ -50,22 +50,17 @@ class MeetingListItem extends React.PureComponent {
 
 
 class MeetingSelectList extends React.PureComponent {
-  state = {selected: 'profileId'};
-
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.id.toString();
 
   _onPressItem = (id) => {
-    this.setState((state) => {
-      const selected = id;
-      return {selected};
-    });
+    this.props.onSelected(id);
   };
 
   _renderItem = ({item}) => (
     <MeetingListItem
       id={item.id}
       onPressItem={this._onPressItem}
-      selected={this.state.selected == item.id}
+      selected={this.props.selected == item.id}
       title={item.title} />
   );
 
@@ -73,7 +68,7 @@ class MeetingSelectList extends React.PureComponent {
     return (
       <FlatList
         data={this.props.data}
-        extraData={this.state}
+        extraData={this.props}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem} />
     );
@@ -88,7 +83,9 @@ export default class MeetingChoicesView extends React.Component {
         <MeetingSelectList data={[
           {id: 'profileId', title: 'BostonSully'},
           {id: 123456789, title: 'Daily Standup @ 10:10am'}
-        ]} />
+        ]}
+                selected={this.props.selected}
+                onSelected={this.props.onSelected} />
       </View> 
     );
   }

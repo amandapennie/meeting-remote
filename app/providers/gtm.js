@@ -8,6 +8,10 @@ function getAdHocGtmLauchUrl(access) {
 
 		createMeetingApiCall(access)
 		.then((createResp) => {
+			if(createResp.err) {
+				return reject(createResp.message);
+			}
+
 			if(createResp.length < 1) {
 				reject("Error creating meeting");
 				return;
@@ -42,7 +46,6 @@ function startMeetingApiCall(access, meetingId) {
 		  headers,
 		})
 		.then((response) => {
-			console.log(response);
 			return response.json()
 		})
 		.then((startResp) => {
@@ -77,7 +80,6 @@ function createMeetingApiCall(access) {
 		  })
 		})
 		.then((response) => {
-			console.log(response);
 			return response.json()
 		})
 		.then((createResp) => {
@@ -149,8 +151,12 @@ function getAccessJwt(access) {
 			const queryData = url.parse(resp.hostUrl, true).query;
 	        const jwt = queryData.authenticationToken;
 
-	        deleteMeeting(access, meetingId);
-		    return resolve(jwt);
+	        return deleteMeeting(access, meetingId)
+	        .then(() => {
+	        	return resolve(jwt);
+	        }).catch(() => {
+	        	return resolve(jwt);
+	        });
 		})
 		.catch((err) => {
 	    	reject(err);
@@ -170,7 +176,6 @@ function getScreensharingData(jwt, meetingId) {
 		  headers
 		})
 		.then((response) => {
-			console.log(response);
 			return response.json()
 		})
 		.then((sessionScreensharingResp) => {
@@ -191,20 +196,17 @@ function killSession(access, meetingId) {
 			return getScreensharingData(jwt, meetingId);
 		})
 		.then((screenshareResp) => {
-			console.log('delegationToken');
-			console.log(screenshareResp.delegationToken);
 	        const headers = {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
 				'Authorization': `Delegation ${screenshareResp.delegationToken}`
 			};
-			console.log('about to kill');
+
 	  		fetch(`https://apiglobal.gotomeeting.com/rest/2/meetings/${meetingId}/session`, {
 			  method: 'DELETE',
 			  headers
 			})
 			.then((response) => {
-				console.log(response);
 				return resolve();
 			})
 		    .catch((err) => {

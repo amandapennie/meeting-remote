@@ -22,10 +22,6 @@ export default class ProviderButton extends React.Component {
     super(props);
   }
 
-  onPress = () => {
-
-  }
-
   render() {
     const bgColor = (this.props.disabled) ? "#666666" : "#fa7c2d";
     return (
@@ -34,7 +30,7 @@ export default class ProviderButton extends React.Component {
               style={styles.button}
               disabled={this.props.disabled}
               color={"#ffffff"}
-              onPress={this.onPress} 
+              onPress={this.props.onPress} 
               title="Launch Meeting" />
       </View> 
     );

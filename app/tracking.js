@@ -1,7 +1,8 @@
+import { SEGMENT_WRITE_KEY } from 'react-native-dotenv'
 import Analytics from 'analytics-react-native';
 import DeviceInfo from 'react-native-device-info';
 
-const analytics = new Analytics("0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V");
+const analytics = new Analytics(SEGMENT_WRITE_KEY);
 
 export const DEVICE_ID = DeviceInfo.getUniqueID();
 

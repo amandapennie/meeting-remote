@@ -2,29 +2,27 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
-import Config from '../../config';
 import { Buffer } from 'buffer';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
-import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
 import { track } from '../../tracking';
 
 const INCLUDE_DUPES = false;
 
 export const constants = {
-  PROVIDER_SELECTED: 'PROVIDER_SELECTED',
+  PROVIDER_SELECTED: 'provider/PROVIDER_SELECTED',
   PROVIDER_AUTH_RECEIVED: 'provider/PROVIDER_AUTH_RECEIVED', 
-  PROVIDER_LAUNCH_REQUESTED: 'PROVIDER_LAUNCH_REQUESTED', 
-  PROVIDER_LAUNCH_REQUEST_ENDED: 'PROVIDER_LAUNCH_REQUEST_ENDED',
-  PROVIDER_LAUNCH_CODE_GRANTED: 'PROVIDER_LAUNCH_CODE_GRANTED', 
-  PROVIDER_LOAD_UPCOMING_MTGS_START: 'PROVIDER_LOAD_UPCOMING_MTGS_START',
-  PROVIDER_LOAD_UPCOMING_MTGS_ENDED: 'PROVIDER_LOAD_UPCOMING_MTGS_ENDED',
-  PROVIDER_LOAD_UPCOMING_MTGS_ERROR: 'PROVIDER_LOAD_UPCOMING_MTGS_ERROR',
-  PROVIDER_SESSION_KILL_REQUESTED: 'PROVIDER_SESSION_KILL_REQUESTED',
-  PROVIDER_SESSION_KILLED: 'PROVIDER_SESSION_KILLED',
-  PROVIDER_SESSION_KILL_ERROR: 'PROVIDER_SESSION_KILL_ERROR',
+  PROVIDER_LAUNCH_REQUESTED: 'provider/PROVIDER_LAUNCH_REQUESTED', 
+  PROVIDER_LAUNCH_REQUEST_ENDED: 'provider/PROVIDER_LAUNCH_REQUEST_ENDED',
+  PROVIDER_LAUNCH_CODE_GRANTED: 'provider/PROVIDER_LAUNCH_CODE_GRANTED', 
+  PROVIDER_LOAD_UPCOMING_MTGS_START: 'provider/PROVIDER_LOAD_UPCOMING_MTGS_START',
+  PROVIDER_LOAD_UPCOMING_MTGS_ENDED: 'provider/PROVIDER_LOAD_UPCOMING_MTGS_ENDED',
+  PROVIDER_LOAD_UPCOMING_MTGS_ERROR: 'provider/PROVIDER_LOAD_UPCOMING_MTGS_ERROR',
+  PROVIDER_SESSION_KILL_REQUESTED: 'provider/PROVIDER_SESSION_KILL_REQUESTED',
+  PROVIDER_SESSION_KILLED: 'provider/PROVIDER_SESSION_KILLED',
+  PROVIDER_SESSION_KILL_ERROR: 'provider/PROVIDER_SESSION_KILL_ERROR',
   ERROR: 'autoreduce provider/ERROR',
 };
 
@@ -50,13 +48,13 @@ export function selectProvider(providerType) {
         "provider" : providerType,
         "supported" : true
       })
-      dispatch(Actions.login());
+      RouterActions.login({type: 'push'});
     } else {
       track("Provider_Selected", {
         "provider" : providerType,
         "supported" : false
       })
-      dispatch(Actions.unsupported());
+      RouterActions.unsupported({type: 'push'});
     };
   }
 }
@@ -80,11 +78,13 @@ export function handleAuthResponse(providerType, access) {
 export function startMeeting(options) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
+      console.log(options);
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       const {access} = getState().provider.authenticatedProviders[providerType];
       //only supports gtm for now
       gtm.getAdHocGtmLauchUrl(access)
       .then((resp) => {
+        console.log(resp);
         dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
         dispatch(Actions.session());
@@ -100,14 +100,11 @@ export function endMeeting(options) {
       const {providerType, peripheral, meetingId} = options;
       dispatch(providerSessionKillRequested({providerType, meetingId}));
       const {access} = getState().provider.authenticatedProviders[providerType];
-      console.log('in kill')
-      console.log(peripheral);
-      console.log(meetingId);
       dispatch(bluetoothActions.attemptDisconnect(peripheral, true));
       //only supports gtm for now
       gtm.killSession(access, meetingId)
       .then((resp) => {
-        dispatch(providerSessionKilled({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+        dispatch(providerSessionKilled({meetingId: meetingId}));
       })
       .catch((err) => {
         dispatch(providerSessionKillError(err));

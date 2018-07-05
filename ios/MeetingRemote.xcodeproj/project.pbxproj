@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -38,6 +37,17 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		73A0A02820DD9278006A78ED /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A0A02520DD91F5006A78ED /* libRNDeviceInfo.a */; };
 		73A0A03220E06031006A78ED /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A0A02F20E0601C006A78ED /* libBVLinearGradient.a */; };
+		73A0A03F20E1640B006A78ED /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03420E1640B006A78ED /* Octicons.ttf */; };
+		73A0A04020E1640B006A78ED /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03520E1640B006A78ED /* Feather.ttf */; };
+		73A0A04120E1640B006A78ED /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03620E1640B006A78ED /* Entypo.ttf */; };
+		73A0A04220E1640B006A78ED /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03720E1640B006A78ED /* MaterialCommunityIcons.ttf */; };
+		73A0A04320E1640B006A78ED /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03820E1640B006A78ED /* Foundation.ttf */; };
+		73A0A04420E1640B006A78ED /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03920E1640B006A78ED /* Ionicons.ttf */; };
+		73A0A04520E1640B006A78ED /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03A20E1640B006A78ED /* FontAwesome.ttf */; };
+		73A0A04620E1640B006A78ED /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03B20E1640B006A78ED /* Zocial.ttf */; };
+		73A0A04720E1640B006A78ED /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03C20E1640B006A78ED /* EvilIcons.ttf */; };
+		73A0A04820E1640B006A78ED /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03D20E1640B006A78ED /* SimpleLineIcons.ttf */; };
+		73A0A04920E1640B006A78ED /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73A0A03E20E1640B006A78ED /* MaterialIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		DBA0ABE8CC254BFEA9FD0F17 /* libRNBLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 28CBEB32C3024E66A29B2343 /* libRNBLE.a */; };
@@ -382,6 +392,17 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		73A0A01F20DD91E6006A78ED /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		73A0A02920E06016006A78ED /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
+		73A0A03420E1640B006A78ED /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
+		73A0A03520E1640B006A78ED /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
+		73A0A03620E1640B006A78ED /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
+		73A0A03720E1640B006A78ED /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
+		73A0A03820E1640B006A78ED /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Foundation.ttf; sourceTree = "<group>"; };
+		73A0A03920E1640B006A78ED /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ionicons.ttf; sourceTree = "<group>"; };
+		73A0A03A20E1640B006A78ED /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
+		73A0A03B20E1640B006A78ED /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
+		73A0A03C20E1640B006A78ED /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
+		73A0A03D20E1640B006A78ED /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
+		73A0A03E20E1640B006A78ED /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
@@ -528,6 +549,7 @@
 		13B07FAE1A68108700A75B9A /* MeetingRemote */ = {
 			isa = PBXGroup;
 			children = (
+				73A0A03320E1640B006A78ED /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -584,6 +606,7 @@
 			children = (
 				28CBEB32C3024E66A29B2343 /* libRNBLE.a */,
 				5B0F670282A94EEEB3653A4B /* libBleClient.a */,
+				53AD8CF144664880A1C8DACD /* libReactNativeConfig.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -612,6 +635,25 @@
 				73A0A03120E0601C006A78ED /* libBVLinearGradient.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		73A0A03320E1640B006A78ED /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				73A0A03420E1640B006A78ED /* Octicons.ttf */,
+				73A0A03520E1640B006A78ED /* Feather.ttf */,
+				73A0A03620E1640B006A78ED /* Entypo.ttf */,
+				73A0A03720E1640B006A78ED /* MaterialCommunityIcons.ttf */,
+				73A0A03820E1640B006A78ED /* Foundation.ttf */,
+				73A0A03920E1640B006A78ED /* Ionicons.ttf */,
+				73A0A03A20E1640B006A78ED /* FontAwesome.ttf */,
+				73A0A03B20E1640B006A78ED /* Zocial.ttf */,
+				73A0A03C20E1640B006A78ED /* EvilIcons.ttf */,
+				73A0A03D20E1640B006A78ED /* SimpleLineIcons.ttf */,
+				73A0A03E20E1640B006A78ED /* MaterialIcons.ttf */,
+			);
+			name = Fonts;
+			path = "../node_modules/react-native-vector-icons/Fonts";
 			sourceTree = "<group>";
 		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
@@ -778,7 +820,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 4ATW7PMKMA;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1189,6 +1231,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				73A0A04720E1640B006A78ED /* EvilIcons.ttf in Resources */,
+				73A0A04320E1640B006A78ED /* Foundation.ttf in Resources */,
+				73A0A04620E1640B006A78ED /* Zocial.ttf in Resources */,
+				73A0A04920E1640B006A78ED /* MaterialIcons.ttf in Resources */,
+				73A0A04420E1640B006A78ED /* Ionicons.ttf in Resources */,
+				73A0A04820E1640B006A78ED /* SimpleLineIcons.ttf in Resources */,
+				73A0A03F20E1640B006A78ED /* Octicons.ttf in Resources */,
+				73A0A04020E1640B006A78ED /* Feather.ttf in Resources */,
+				73A0A04520E1640B006A78ED /* FontAwesome.ttf in Resources */,
+				73A0A04120E1640B006A78ED /* Entypo.ttf in Resources */,
+				73A0A04220E1640B006A78ED /* MaterialCommunityIcons.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1322,7 +1375,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1348,7 +1400,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1364,14 +1415,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 4ATW7PMKMA;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 				);
 				INFOPLIST_FILE = MeetingRemote/Info.plist;
+				INFOPLIST_PREPROCESS = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1380,6 +1434,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
 				PRODUCT_NAME = MeetingRemote;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1389,13 +1445,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4ATW7PMKMA;
+				DEVELOPMENT_TEAM = GFNFVT632V;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
 				);
 				INFOPLIST_FILE = MeetingRemote/Info.plist;
+				INFOPLIST_PREPROCESS = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1404,6 +1464,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
 				PRODUCT_NAME = MeetingRemote;
+				PROVISIONING_PROFILE = "4740e01c-7c67-4eec-8f6c-974a70136ddb";
+				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1429,7 +1491,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1464,7 +1525,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1498,7 +1558,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1532,7 +1591,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1563,6 +1621,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1580,9 +1639,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_PREPROCESS = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1604,19 +1665,22 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_PREPROCESS = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
