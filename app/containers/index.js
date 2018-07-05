@@ -4,3 +4,4 @@ export { Login } from './Login';
 export { ProviderDashboard } from './ProviderDashboard';
 export { Main } from './Main';
 export { Unsupported } from './Unsupported';
+export { Session } from './Session';
