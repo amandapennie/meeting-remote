@@ -58,7 +58,7 @@ class ProviderDashboardView extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if(Object.keys(nextProps.bluetoothState.connectedPeripherals).length > 0){
-      RouterActions.connected({type: 'push'});
+      RouterActions.session({type: 'push'});
     }
 
     if(this.props.launchData && nextProps.launchData === null) {
@@ -201,8 +201,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
-    marginTop: 25
+    flex: 1
   },
   horizontal: {
     flexDirection: 'row',

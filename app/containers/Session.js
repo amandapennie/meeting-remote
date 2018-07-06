@@ -18,7 +18,8 @@ import {
   Linking,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
+import { Actions as RouterActions } from 'react-native-router-flux';
+import { Scene, Router, ActionConst } from 'react-native-router-flux';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import * as providerActions from '../store/actions/provider';
 
@@ -31,6 +32,12 @@ class SessionView extends React.Component {
     };
     this.toggleStopwatch = this.toggleStopwatch.bind(this);
     this.resetStopwatch = this.resetStopwatch.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(Object.keys(nextProps.bluetoothState.connectedPeripherals).length == 0){
+      RouterActions.pop();
+    }
   }
 
 // toggle when container is opened
@@ -47,7 +54,7 @@ class SessionView extends React.Component {
   };
 
   render() {
-    return [
+    return (
       <View style={styles.container}>
         <Stopwatch laps start={this.state.stopwatchStart}
           reset={this.state.stopwatchReset}
@@ -60,21 +67,32 @@ class SessionView extends React.Component {
           <Text style={styles.text}> End Meeting </Text>
         </TouchableOpacity>
       </View>
-    ];
+    );
   }
 
   _onPressInvite = () => {
   }
 
   _onPressEndMeeting = () => {
-    this.props.endMeeting(options);
+    this.props.endMeeting({
+      providerType: this.props.providerType,
+      peripheral: this.props.peripheral,
+      meetingId: this.props.meetingId
+    });
   }
 
 }
 
 function mapStateToProps(state, ownProps) {
+  const bluetoothState = state.bluetooth;
+  const peripheral = bluetoothState.connectedPeripherals[Object.keys(bluetoothState.connectedPeripherals)[0]];
+  const meetingId = (state.provider.launchData) ? state.provider.launchData.meetingId : null;
   return {
-  }
+    bluetoothState,
+    peripheral,
+    providerType: state.provider.currentProviderType,
+    meetingId: meetingId
+  };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {

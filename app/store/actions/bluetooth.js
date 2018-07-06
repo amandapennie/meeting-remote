@@ -118,7 +118,6 @@ export function attemptConnect(peripheral, noPrompt) {
 
         const { launchData } = getState().provider;
 
-        console.log("do we have data")
         console.log(launchData);
         if(launchData) {
           // gtm specific code
