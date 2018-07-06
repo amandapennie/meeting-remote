@@ -846,7 +846,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = F38D7M88E8;
+						DevelopmentTeam = 4ATW7PMKMA;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1475,7 +1475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = F38D7M88E8;
+				DEVELOPMENT_TEAM = 4ATW7PMKMA;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-ble",
@@ -1489,7 +1489,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote4;
 				PRODUCT_NAME = MeetingRemote;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1505,7 +1505,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = F38D7M88E8;
+				DEVELOPMENT_TEAM = 4ATW7PMKMA;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1520,7 +1520,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote4;
 				PRODUCT_NAME = MeetingRemote;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

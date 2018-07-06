@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { Alert } from 'react-native';
+import { Alert, Share } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import noble from 'react-native-ble';
 import { Buffer } from 'buffer';
@@ -8,6 +8,7 @@ import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
 import { track } from '../../tracking';
+
 
 const INCLUDE_DUPES = false;
 
@@ -37,6 +38,7 @@ export const providerLoadUpcomingMtgsError = createAction(constants.PROVIDER_LOA
 export const providerSessionKillRequested = createAction(constants.PROVIDER_SESSION_KILL_REQUESTED);
 export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KILLED);
 export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
+export const meetingLinkShared = createAction(constants.MEETING_LINK_SHARED);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
 
@@ -138,5 +140,16 @@ export function loadUpcomingMeetings(providerType) {
     .catch((err) => {
       dispatch(providerLoadUpcomingMtgsError(err));
     })
+  }
+}
+
+export function shareLink(meetingId) {
+  return async function (dispatch, getState) {
+      Share.share({
+      message: 'Join my meeting!',
+      url: `https://gotomeet.me/${meetingId}`,
+      title: 'Share meeting link'
+    })
+      dispatch(meetingLinkShared({meetingId}));
   }
 }
