@@ -47,14 +47,23 @@ export function selectProvider(providerType) {
       track("Provider_Selected", {
         "provider" : providerType,
         "supported" : true
-      })
-      RouterActions.login({type: 'push'});
+      });
+
+      const { authenticatedProviders } = getState().provider;
+      if(authenticatedProviders.hasOwnProperty(providerType)) {
+        RouterActions.providerDashboard({type: 'push'});
+        return;
+      } else {
+        RouterActions.login({type: 'push'});
+        return;
+      }
     } else {
       track("Provider_Selected", {
         "provider" : providerType,
         "supported" : false
       })
       RouterActions.unsupported({type: 'push'});
+      return;
     };
   }
 }
@@ -84,10 +93,8 @@ export function startMeeting(options) {
       //only supports gtm for now
       gtm.getAdHocGtmLauchUrl(access)
       .then((resp) => {
-        console.log(resp);
         dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
-        dispatch(Actions.session());
       })
       .catch((err) => {
         console.log(err);
