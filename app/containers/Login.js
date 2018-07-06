@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, WebView, ActivityIndicator, Dimensions } from 'react-native';
 import { Actions as RouterActions } from 'react-native-router-flux';
-import Config from '../config';
+import { GTM_CONSUMER_KEY } from 'react-native-dotenv';
 import url from 'url';
 
 import LoadingView from '../components/LoadingView';
@@ -37,7 +37,7 @@ export class ProviderLoginView extends React.Component {
   }
 
   getAuthorizeUri() {
-    return `https://api.getgo.com/oauth/v2/authorize?client_id=${Config.gtm.consumerKey}&response_type=code&state=mr&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+    return `https://api.getgo.com/oauth/v2/authorize?client_id=${GTM_CONSUMER_KEY}&response_type=code&state=mr&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
   }
 
   render() {

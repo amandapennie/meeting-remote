@@ -26,6 +26,14 @@ export default handleActions(
       return Object.assign({}, state, {launchRequested: false, launchData: null});
     },
 
+    [actions.constants.PROVIDER_SESSION_KILL_REQUESTED]: (state, action) => {
+      return Object.assign({}, state, {launchRequested: false, launchData: null});
+    },
+
+    [actions.constants.PROVIDER_SESSION_KILLED]: (state, action) => {
+      return Object.assign({}, state, {launchRequested: false, launchData: null});
+    },
+
     [actions.constants.PROVIDER_LAUNCH_CODE_GRANTED]: (state, action) => {
       return Object.assign({}, state, {launchData: action.payload});
     },

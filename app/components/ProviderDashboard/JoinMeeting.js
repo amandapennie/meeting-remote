@@ -12,7 +12,8 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
-  TextInput
+  TextInput,
+  Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -34,6 +35,7 @@ export default class JoinMeetingView extends React.Component {
         <View style={{padding: 10}}>
           <TextInput
             style={{height: 40, borderColor: 'gray', textAlign: 'center', borderWidth: 1, backgroundColor: "#ffffff"}}
+            onBlur={Keyboard.dismiss}
             onChangeText={this.onJoinCodeChange}
             placeholder="Enter a Meeting ID or name"
             placeholderTextColor="#666666"

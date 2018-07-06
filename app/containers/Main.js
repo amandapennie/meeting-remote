@@ -25,45 +25,41 @@ import * as providerActions from '../store/actions/provider';
 class MainView extends React.Component {
   render() {
     return [
-      <View style={styles.title} key="title">
+      <View style={styles.title} key="mainTitle">
         <Text style={styles.titleText} > Meeting Remote </Text>
         <Text style={styles.subText}> Choose your provider </Text>
       </View>,
-      <View style={styles.container}>,
-        <View>
-        <TouchableOpacity onPress={this._onPressGTM} style={ styles.touch }>
+      <View style={styles.container} key="providers">
+        <TouchableOpacity onPress={this._onPressGTM} style={ styles.touch } key="gtm">
           <Image
             style={ styles.button }
             source={require('./logos/gtmw.png')} />      
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._onPressBlueJeans} style={ styles.touch }>
+        <TouchableOpacity onPress={this._onPressBlueJeans} style={ styles.touch } key="bluejeans">
           <Image
             style={ styles.button }
             source={require('./logos/bluejeansw.png')} />      
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._onPressHangout} style={ styles.touch }>
+        <TouchableOpacity onPress={this._onPressHangout} style={ styles.touch } key="hangouts">
           <Image
             style={ styles.button }
             source={require('./logos/hangoutw.png')} />      
         </TouchableOpacity>
-        </View>
-        <View>
-        <TouchableOpacity onPress={this._onPressZoom} style={ styles.touch }>
+        <TouchableOpacity onPress={this._onPressZoom} style={ styles.touch } key="zoom">
           <Image
             style={ styles.button }
             source={require('./logos/zoomw.png')} />      
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._onPressWebex} style={ styles.touch }>
+        <TouchableOpacity onPress={this._onPressWebex} style={ styles.touch } key="webex">
           <Image
             style={ styles.button }
             source={require('./logos/webexw.png')} />      
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._onPressSkype} style={ styles.touch }>
+        <TouchableOpacity onPress={this._onPressSkype} style={ styles.touch } key="skype">
           <Image
             style={ styles.button }
             source={require('./logos/skypew.png')} />      
         </TouchableOpacity>
-        </View>
       </View>
     ];
   }
@@ -119,39 +115,27 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     title: {
-        borderTopWidth: 30,
-        borderColor: '#fff',
-        flex: 1,
+        marginTop: 30,
         flexDirection: 'column',
-        flexWrap: 'wrap',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
     container: {
-        flex: 10,
+        flex: 1,
+        paddingTop: 30,
         flexDirection: 'row',
+        justifyContent: 'space-around',
         flexWrap: 'wrap',
-        borderBottomWidth: 20,
-        borderRightWidth: 50,
-        borderColor: '#fff',
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        alignContent: 'center',
-        justifyContent: 'space-between',
+        backgroundColor: '#fff'
     },
     button: {
-        flex: 1,
-        height: 50,
-        width: 175,
-        padding: 60,
-        alignItems: 'center',
+        width: 150,
+        height: 150
     },
     touch: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexBasis: '50%',
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: 25
     },
 });

@@ -46,16 +46,14 @@ class ConnectedView extends React.Component {
   }
 
   disconnect() {
-    console.log(this.props.peripheral);
     this.props.launchEnd();
     this.props.attemptDisconnect(this.props.peripheral, true);
   }
 
   endMeeting() {
-    console.log(this.props);
     this.props.endMeeting({
       providerType: this.props.providerType,
-      periheral: this.props.peripheral,
+      peripheral: this.props.peripheral,
       meetingId: this.props.meetingId
     });
   }
