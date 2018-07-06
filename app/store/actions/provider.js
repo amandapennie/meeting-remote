@@ -24,6 +24,7 @@ export const constants = {
   PROVIDER_SESSION_KILL_REQUESTED: 'provider/PROVIDER_SESSION_KILL_REQUESTED',
   PROVIDER_SESSION_KILLED: 'provider/PROVIDER_SESSION_KILLED',
   PROVIDER_SESSION_KILL_ERROR: 'provider/PROVIDER_SESSION_KILL_ERROR',
+  PROVIDER_MEETING_LINK_SHARED: 'provider/PROVIDER_MEETING_LINK_SHARED',
   ERROR: 'autoreduce provider/ERROR',
 };
 
@@ -38,7 +39,7 @@ export const providerLoadUpcomingMtgsError = createAction(constants.PROVIDER_LOA
 export const providerSessionKillRequested = createAction(constants.PROVIDER_SESSION_KILL_REQUESTED);
 export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KILLED);
 export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
-export const meetingLinkShared = createAction(constants.MEETING_LINK_SHARED);
+export const meetingLinkShared = createAction(constants.PROVIDER_MEETING_LINK_SHARED);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
 
@@ -146,10 +147,10 @@ export function loadUpcomingMeetings(providerType) {
 export function shareLink(meetingId) {
   return async function (dispatch, getState) {
       Share.share({
-      message: 'Join my meeting!',
-      url: `https://gotomeet.me/${meetingId}`,
-      title: 'Share meeting link'
-    })
+          message: 'Join my meeting!',
+          url: `https://gotomeet.me/${meetingId}`,
+          title: 'Share meeting link'
+      });
       dispatch(meetingLinkShared({meetingId}));
   }
 }
