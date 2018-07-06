@@ -59,6 +59,7 @@ function startMeetingApiCall(access, meetingId) {
 
 function createMeetingApiCall(access) {
   return new bluebird.Promise(function(resolve, reject) {
+  	   console.log(access);
   	    const headers = {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json',
@@ -71,8 +72,8 @@ function createMeetingApiCall(access) {
 		  headers,
 		  body: JSON.stringify({
 			    subject: "ad-hoc meeting",
-			    starttime: "2018-06-21T05:00:00Z",
-			    endtime: "2018-06-21T06:00:00Z",
+			    starttime: "2018-06-26T05:00:00Z",
+			    endtime: "2018-06-26T06:00:00Z",
 			    passwordrequired: false,
 			    conferencecallinfo: "Hybrid",
 			    timezonekey: "",

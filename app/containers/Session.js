@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Share } from 'react-native';
 import {
   ActivityIndicator,
   Button,
@@ -71,6 +72,12 @@ class SessionView extends React.Component {
   }
 
   _onPressInvite = () => {
+    meetingId: this.props.meetingId,
+    Share.share({
+      message: 'Join my meeting!',
+      url: 'https://gotomeet.me/${meetingId}',
+      title: 'Share meeting link'
+    })
   }
 
   _onPressEndMeeting = () => {
