@@ -71,9 +71,7 @@ class SessionView extends React.Component {
   }
 
   _onPressInvite = () => {
-    this.props.shareLink({
-      meetingId: this.props.meetingId,
-    });
+    this.props.shareLink(this.props.meetingId);
   }
 
   _onPressEndMeeting = () => {
@@ -100,7 +98,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    endMeeting: (options) => dispatch(providerActions.endMeeting(options))
+    endMeeting: (options) => dispatch(providerActions.endMeeting(options)),
     shareLink: (meetingId) => dispatch(providerActions.shareLink(meetingId))
   };
 }
