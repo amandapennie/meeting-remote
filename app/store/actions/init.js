@@ -28,15 +28,15 @@ export function start() {
     //   isLoggedIn = await xively.comm.checkJwt();
     // } catch(e) {}
 
-    RouterActions.session({type: 'replace'});
+    RouterActions.main({type: 'replace'});
 
-    if (isLoggedIn) {
-      dispatch(session.setValidity(true));
-      //await dispatch(loadData());
-      RouterActions.scan({type: 'replace'});
-    } else {
-      dispatch(session.setValidity(false));
-    }
+    // if (isLoggedIn) {
+    //   dispatch(session.setValidity(true));
+    //   //await dispatch(loadData());
+    //   RouterActions.scan({type: 'replace'});
+    // } else {
+    //   dispatch(session.setValidity(false));
+    // }
 
 
     dispatch(initEnd());

@@ -48,15 +48,15 @@ export function selectProvider(providerType) {
         "provider" : providerType,
         "supported" : true
       });
-
-      const { authenticatedProviders } = getState().provider;
-      if(authenticatedProviders.hasOwnProperty(providerType)) {
-        RouterActions.providerDashboard({type: 'push'});
-        return;
-      } else {
-        RouterActions.login({type: 'push'});
-        return;
-      }
+RouterActions.login({type: 'push'});
+      // const { authenticatedProviders } = getState().provider;
+      // if(authenticatedProviders.hasOwnProperty(providerType)) {
+      //   RouterActions.providerDashboard({type: 'push'});
+      //   return;
+      // } else {
+      //   RouterActions.login({type: 'push'});
+      //   return;
+      // }
     } else {
       track("Provider_Selected", {
         "provider" : providerType,
@@ -104,6 +104,8 @@ export function startMeeting(options) {
 
 export function endMeeting(options) {
   return async function (dispatch, getState) {
+          console.log("pop");
+                RouterActions.pop();
       const {providerType, peripheral, meetingId} = options;
       dispatch(providerSessionKillRequested({providerType, meetingId}));
       const {access} = getState().provider.authenticatedProviders[providerType];
