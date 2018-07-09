@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
-import LinearGradient from 'react-native-linear-gradient';
 import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
@@ -153,7 +152,7 @@ class ProviderDashboardView extends React.Component {
             <ActivityIndicator size="large" color="#000" />
           </View>
           <View>
-            <Text>Lauching Meeting...</Text>
+            <Text>Launching Meeting...</Text>
           </View>
         </View>
       );

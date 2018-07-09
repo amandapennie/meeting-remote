@@ -38,13 +38,13 @@ Sentry.setTagsContext({
 
 const scenes = Actions.create(
   <Scene key="root">
+      <Scene key="session" component={Session} hideNavBar={true} title="Session"/>
       <Scene key="landing" component={Landing} hideNavBar={true} title="Landing"/>
       <Scene key="main" component={Main} hideNavBar={true} title="Main"/>
       <Scene key="providerDashboard" component={ProviderDashboard} hideNavBar={true} title="ProviderDashboard"/>
       <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
       <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
       <Scene key="unsupported" component={Unsupported} hideNavBar={false} title="Unsupported"/>
-      <Scene key="session" component={Session} hideNavBar={true} title="Session"/>
   </Scene>
 );
 

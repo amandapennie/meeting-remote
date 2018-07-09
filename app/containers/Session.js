@@ -10,18 +10,19 @@ import {
   View,
   ViewStyle,
   TouchableOpacity,
-  TouchableHighlight,
   ScrollView,
-  FlatList,
-  Platform,
-  Alert,
-  Linking,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import { Scene, Router, ActionConst } from 'react-native-router-flux';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import * as providerActions from '../store/actions/provider';
+import Config from '../config';
+import MeetingChoicesView from '../components/ProviderDashboard/MeetingChoices';
+import JoinMeetingView from '../components/ProviderDashboard/JoinMeeting';
+import ConferenceSystemChoicesView from '../components/ProviderDashboard/ConferenceSystemChoices';
+import ProviderButton from '../components/ProviderButton';
+import HorizontalRule from '../components/HorizontalRule';
 
 class SessionView extends React.Component {
   constructor(props) {
@@ -54,19 +55,46 @@ class SessionView extends React.Component {
   };
 
   render() {
+    const { profile } = this.props;
+
+    const clickableBtnStyle = {
+      activeColor: Config.colors.lightGrey,
+      activeTextColor: Config.colors.darkGrey
+    }
+
     return (
-      <View style={styles.container}>
-        <Stopwatch laps start={this.state.stopwatchStart}
-          reset={this.state.stopwatchReset}
-          options={options}
-          getTime={this.getFormattedTime} />
-        <TouchableOpacity style={styles.button} onPress={this._onPressInvite}>
-          <Text style={styles.text}> Invite </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={this._onPressEndMeeting}>
-          <Text style={styles.text}> End Meeting </Text>
-        </TouchableOpacity>
-      </View>
+       <View style={styles.container}>
+          <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
+            <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
+            {profile && <Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text> }
+            <HorizontalRule />
+          </View>
+          <View style={{padding: 30, paddingLeft: 25, paddingRight: 25}}>
+            <ProviderButton
+              onPress={this._onPressInvite} 
+              textAlign='center' 
+              fontSize={20} 
+              style={{paddingTop: 10, paddingBottom: 10,}}{...clickableBtnStyle}>{`SHARE MEETING LINK`}</ProviderButton>
+            <Text style={styles.text}>Sitting all alone? Invite others to join your meeting. Click the button to share your meeting link by email, text, Slack, etc.</Text>
+          </View>
+          <View style={{padding:30, flex: 1, marginLeft: 20, marginRight: 20}}>
+            <View>
+              <Stopwatch laps start={this.state.stopwatchStart}
+                reset={this.state.stopwatchReset}
+                options={options}
+                getTime={this.getFormattedTime} />
+            </View>
+            <Text style={{padding: 10, fontSize: 16, color: Config.colors.lightGrey, textAlign: 'center'}}> Meeting Timer </Text>
+          </View>
+          <View style={{padding: 30, paddingLeft: 25, paddingRight: 25}}>
+            <ProviderButton
+              onPress={this._onPressEndMeeting} 
+              textAlign='center' 
+              fontSize={20} 
+              style={{paddingTop: 10, paddingBottom: 10}}{...clickableBtnStyle}>{`END MEETING`}</ProviderButton>
+            <Text style={styles.text}>Have feedback? We would love to hear from you. Reach out to us at support@meetingremote.com</Text>
+          </View>
+        </View>
     );
   }
 
@@ -81,18 +109,19 @@ class SessionView extends React.Component {
       meetingId: this.props.meetingId
     });
   }
-
 }
 
 function mapStateToProps(state, ownProps) {
   const bluetoothState = state.bluetooth;
   const peripheral = bluetoothState.connectedPeripherals[Object.keys(bluetoothState.connectedPeripherals)[0]];
   const meetingId = (state.provider.launchData) ? state.provider.launchData.meetingId : null;
+  const profile = state.provider.authenticatedProviders.profile;
   return {
     bluetoothState,
     peripheral,
     providerType: state.provider.currentProviderType,
-    meetingId: meetingId
+    meetingId: meetingId,
+    profile
   };
 }
 
@@ -109,30 +138,36 @@ export { Session };
 
 const options = {
    container: {
-    flex: 0.3,
-    margin: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    fontSize: 55,
+    fontSize: 70,
     fontFamily: 'HelveticaNeue-Light',
-    color: '#000',
-    marginLeft: 0,
+    color: '#fff',
+    fontWeight: 'bold',
   }
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#fff',
-        alignItems: 'center',
+      marginTop: 20,
+      flex: 1,
+      backgroundColor: Config.colors.darkGrey
     },
     text: {
-        fontFamily: 'HelveticaNeue-Light',
-        fontSize: 28,
-        color: '#fff',
+      padding: 10,
+      marginRight: 30,
+      marginLeft: 30, 
+      textAlign: 'center',
+      color: Config.colors.lightGrey,
+      fontSize: 10,
+    },
+    text2: {
+      textAlign: 'center',
+      color: Config.colors.lightGrey,
+      fontSize: 10,
+      fontWeight: 'bold',
     },
     button: {
         flex: 0.3,
