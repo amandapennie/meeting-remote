@@ -8,6 +8,11 @@ import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
 import { track } from '../../tracking';
+import {
+  Sentry,
+  SentrySeverity,
+  SentryLog
+} from 'react-native-sentry';
 
 
 const INCLUDE_DUPES = false;
@@ -51,15 +56,15 @@ export function selectProvider(providerType) {
         "provider" : providerType,
         "supported" : true
       });
-RouterActions.login({type: 'push'});
-      // const { authenticatedProviders } = getState().provider;
-      // if(authenticatedProviders.hasOwnProperty(providerType)) {
-      //   RouterActions.providerDashboard({type: 'push'});
-      //   return;
-      // } else {
-      //   RouterActions.login({type: 'push'});
-      //   return;
-      // }
+//RouterActions.login({type: 'push'});
+      const { authenticatedProviders } = getState().provider;
+      if(authenticatedProviders.hasOwnProperty(providerType)) {
+        RouterActions.providerDashboard({type: 'push'});
+        return;
+      } else {
+        RouterActions.login({type: 'push'});
+        return;
+      }
     } else {
       track("Provider_Selected", {
         "provider" : providerType,
@@ -69,6 +74,30 @@ RouterActions.login({type: 'push'});
       return;
     };
   }
+}
+
+export function requestAuthSignin() {
+    return async function (dispatch, getState) {
+        Alert.alert(
+        'Authentication Required',
+        'Please sign in to GoToMeeting to start using Meeting Remote',
+        [
+          { text: 'Cancel', 
+            onPress: () => {
+              track('SIGN_IN_ALERT_CANCELED');
+            }, 
+            style: 'cancel'
+          },
+          { text: 'Sign In', 
+            onPress: () => {
+              RouterActions.login({type: 'replace'}); 
+              track('SIGN_IN_ALERT_GRANTED');
+            }
+          },
+        ],
+        { cancelable: false }
+      )
+    }
 }
 
 export function handleAuthResponse(providerType, access) {

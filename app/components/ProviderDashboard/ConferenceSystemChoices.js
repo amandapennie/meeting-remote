@@ -14,6 +14,7 @@ import {
   FlatList
 } from 'react-native';
 import { connect } from 'react-redux';
+import Config from '../../config';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 
@@ -79,8 +80,8 @@ export default class ConferenceSystemChoicesView extends React.Component {
     // if not poweredOn need to tell them to turn on bluetooth
     if(bluetoothState.bluetoothHardwareState !== "poweredOn") {
       return (
-        <View style={{flex: 0.5, paddingTop: 10}}>
-          <Text style={{color: "#cfdaee", marginLeft: 10, fontSize: 18}}>Choose a device:</Text>
+        <View style={{flex: 0.5, paddingTop: 10, backgroundColor: Config.colors.mediumGrey}}>
+          <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Conference Rooms Near Me:</Text>
           <View style={{flex: 1, paddingTop: 30}}>
               <Text style={styles.bleStatusMessage}>Turn on bluetooth</Text>
               <Text style={styles.bleStatusMessage}>to find nearby devices</Text>
@@ -91,10 +92,10 @@ export default class ConferenceSystemChoicesView extends React.Component {
 
     const discoveredPeripherals = Object.values(bluetoothState.discoveredPeripherals);
     return (
-      <View style={{flex: 0.5, paddingTop: 10}}>
+      <View style={{paddingTop: 10, backgroundColor: Config.colors.mediumGrey}}>
           <View style={{flexDirection: 'row'}}>
               <View style={{flex:1}}>
-                <Text style={{color: "#cfdaee", marginLeft: 10, fontSize: 18}}>Choose a device:</Text>
+                <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Conference Rooms Near Me:</Text>
               </View>
               <View style={{paddingRight: 10}}>
                 <ActivityIndicator animating={bluetoothState.scanning} size="small" color="#fff" />
@@ -118,6 +119,6 @@ const styles = StyleSheet.create({
   },
   bleStatusMessage: {
     textAlign: 'center', 
-    color: "#cfdaee"
+    color: Config.colors.darkGrey
   }
 });

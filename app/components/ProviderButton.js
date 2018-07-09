@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
+import Config from '../config';
+
 
 export default class ProviderButton extends React.Component {
   constructor(props) {
@@ -23,22 +25,27 @@ export default class ProviderButton extends React.Component {
   }
 
   render() {
-    const bgColor = (this.props.disabled) ? "#666666" : "#fa7c2d";
+    const propStyles = this.props.style || {};
+    const bgColor = (this.props.disabled) ? Config.colors.lightGrey :  this.props.activeColor || "#ffffff";
     return (
-      <View style={[styles.wrapper, {backgroundColor: bgColor}]}>
-          <Button
-              style={styles.button}
-              disabled={this.props.disabled}
-              color={"#ffffff"}
-              onPress={this.props.onPress} 
-              title="Launch Meeting" />
-      </View> 
+      <TouchableOpacity 
+          style={[styles.wrapper, {backgroundColor: bgColor}, propStyles]}
+          onPress={(this.props.disabled) ? () => {return;} : this.props.onPress}>
+          <Text
+              style={[{color: this.props.activeTextColor || Config.colors.darkGrey, padding: 0, margin: 0, textAlign: this.props.textAlign || 'left', fontSize: this.props.fontSize || 15}]}>
+              {this.props.children}
+          </Text>
+      </TouchableOpacity> 
     );
   }
 }
 
 const styles = StyleSheet.create({
   wrapper: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
     borderRadius: 5,
     backgroundColor: "#fa7c2d",
   },

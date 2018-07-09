@@ -18,11 +18,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
-
+import Config from '../config';
 import MeetingChoicesView from '../components/ProviderDashboard/MeetingChoices';
 import JoinMeetingView from '../components/ProviderDashboard/JoinMeeting';
 import ConferenceSystemChoicesView from '../components/ProviderDashboard/ConferenceSystemChoices';
-import ProviderButton from '../components/ProviderButton'
+import ProviderButton from '../components/ProviderButton';
+import HorizontalRule from '../components/HorizontalRule';
 
 function rowHasChanged(r1, r2) {
   // currently only care about changes to bluetooth connection
@@ -34,6 +35,7 @@ class ProviderDashboardView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      launchType: null,
       selectedMeetingId: 'profileId',
       selectedPeripheral: null,
       hasValidLaunchInfo: false,
@@ -113,6 +115,34 @@ class ProviderDashboardView extends React.Component {
     });
   }
 
+  launchTypeSelected = (type) => {
+    
+    // TODO: Check user logged in state here
+    // if(type === 'start') {
+    //   this.props.requestAuthSignin();
+    //   return;
+    // }
+
+    this.setState((state) => {
+      state.launchType = type;
+      return state;
+    });
+  }
+
+  renderJoinChoices = () => {
+    return (
+      <JoinMeetingView />
+    );
+  }
+
+  renderStartChoices = () => {
+    return (
+      <MeetingChoicesView
+        onSelected={this.onMeetingIdSelected}
+        selected={this.state.selectedMeetingId} />
+    );
+  }
+
   render() {
     const { bluetoothState, launchRequested, profile } = this.props;
 
@@ -128,36 +158,56 @@ class ProviderDashboardView extends React.Component {
         </View>
       );
     }
+    console.log(this.state.launchType);
 
+    const clickableBtnStyle = {
+      activeColor: Config.colors.lightGrey,
+      activeTextColor: Config.colors.darkGrey
+    }
+
+    const joinBtnStyle = (this.state.launchType == 'join') ? {} : clickableBtnStyle;
+    const startBtnStyle = (this.state.launchType == 'start') ? {} : clickableBtnStyle;
     //         {profile.avatarUrl && <Image style={{width: 40, height: 40}} source={{uri: profile.avatarUrl }} /> }
     return (
-       <LinearGradient start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}} colors={['#515f75', '#886952', '#515f75']} style={styles.container}>
-          <View style={{marginTop: 10, marginBottom: 10}}>
-            <Text style={styles.providerTitle}>GotoMeeting</Text>
-            <Text style={styles.profileName}>{profile.name}</Text>
+       <View style={styles.container}>
+          <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
+            <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
+            {profile && <Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text> }
+            <HorizontalRule />
           </View>
-          <View style={{backgroundColor: "#39404d", paddingTop: 10, flex: 1}}>
-            <View style={{flex: 0.5}}>
-              <MeetingChoicesView
-                onSelected={this.onMeetingIdSelected}
-                selected={this.state.selectedMeetingId} />
-              <JoinMeetingView />
-              <View
-                style={{
-                  marginTop: 5,
-                  width: '100%',
-                  borderBottomColor: '#ffffff',
-                  borderBottomWidth: 1 }} />
+          <View style={{marginLeft: 20, marginRight: 20, paddingTop: 20}}>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{flex: 1, marginRight: 7}}>
+                <ProviderButton 
+                  onPress={() => this.launchTypeSelected('start')} 
+                  style={{padding: 0}} {...startBtnStyle}>{`START A\nMEETING`}</ProviderButton>
+                </View>
+                <View style={{flex: 1, marginLeft: 7}}>
+                  <ProviderButton 
+                    onPress={() => this.launchTypeSelected('join')}  
+                    style={{padding: 0}} {...joinBtnStyle}>{`JOIN A\nMEETING`}</ProviderButton>
+                </View>
+            </View>
+          </View>
+          <View style={{paddingTop: 0, flex: 1, marginLeft: 20, marginRight: 20}}>
+            <View style={{flex: 1}}>
+              {this.state.launchType == 'join' && this.renderJoinChoices()}
+              {this.state.launchType == 'start' && this.renderStartChoices()}
             </View>
             <ConferenceSystemChoicesView 
               bluetoothState={this.props.bluetoothState}
               onSelected={this.onPeripheralSelected}
               selected={this.state.selectedPeripheral} />
           </View>
-          <View style={{padding: 7}}>
-            <ProviderButton disabled={!this.state.hasValidLaunchInfo} onPress={this.startMeeting} />
+          <View style={{padding: 10, paddingLeft: 25, paddingRight: 25}}>
+            <ProviderButton 
+              disabled={!this.state.hasValidLaunchInfo} 
+              onPress={this.startMeeting} 
+              textAlign='center' 
+              fontSize={20} 
+              style={{paddingTop: 10, paddingBottom: 10}}>Launch Meeting</ProviderButton>
           </View>
-        </LinearGradient>
+        </View>
     );
   }
 }
@@ -180,6 +230,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
+    requestAuthSignin: () => dispatch(providerActions.requestAuthSignin()),
     startMeeting: (options) => dispatch(providerActions.startMeeting(options)),
     loadUpcomingMeetings: (providerType) => dispatch(providerActions.loadUpcomingMeetings(providerType)),
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
@@ -201,7 +252,9 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1
+    marginTop: 20,
+    flex: 1,
+    backgroundColor: Config.colors.darkGrey
   },
   horizontal: {
     flexDirection: 'row',
