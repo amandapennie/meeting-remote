@@ -82,8 +82,31 @@ class MeetingSelectList extends React.PureComponent {
 
 export default class MeetingChoicesView extends React.Component {
   render() {
+    const meetingChoices = [
+      {id: 'profileId', title: this.props.profileId}
+    ];
+
+    if(this.props.meetings && this.props.meetings.isArray) {
+      this.props.meetings.map((meeting) => {
+        var start = "";
+        if(meeting.startTime) {
+          try{
+            var startTime = new Date(meeting.startTime.substring(0, 19));
+            start = `@ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+          }catch(e){
+            //pass
+          }
+        }
+        meetingChoices.push({
+          id: meeting.meetingId,
+          title: `${meeting.subject} ${start}`
+        })
+      });
+    }
+
+
     return (
-      <View style={{flex: 1, paddingTop: 25}}>
+      <View style={{flex: 1, paddingTop: 25, paddingBottom: 10}}>
         <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 15, textAlign: 'center'}}>Select your meeting:</Text>
         <View
           style={{
@@ -91,10 +114,7 @@ export default class MeetingChoicesView extends React.Component {
             width: '100%',
             borderBottomColor: Config.colors.lightGrey,
             borderBottomWidth: 1 }} />
-        <MeetingSelectList data={[
-          {id: 'profileId', title: 'BostonSully'},
-          {id: 123456789, title: 'Daily Standup @ 10:10am'}
-        ]}
+        <MeetingSelectList data={meetingChoices}
                 selected={this.props.selected}
                 onSelected={this.props.onSelected} />
       </View> 

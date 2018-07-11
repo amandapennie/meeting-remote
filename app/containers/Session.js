@@ -50,7 +50,8 @@ class SessionView extends React.Component {
   }
 
   getFormattedTime(time) {
-    this.currentTime = time;
+    time = time.substring(3);
+    return time;
   };
 
   render() {

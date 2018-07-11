@@ -24,6 +24,7 @@ import JoinMeetingView from '../components/ProviderDashboard/JoinMeeting';
 import ConferenceSystemChoicesView from '../components/ProviderDashboard/ConferenceSystemChoices';
 import ProviderButton from '../components/ProviderButton';
 import HorizontalRule from '../components/HorizontalRule';
+import LoadingView from '../components/LoadingView';
 
 function rowHasChanged(r1, r2) {
   // currently only care about changes to bluetooth connection
@@ -41,10 +42,9 @@ class ProviderDashboardView extends React.Component {
       hasValidLaunchInfo: false,
     };
 
-    if(!this.props.authenticatedProviders.hasOwnProperty(this.props.providerType)){
-      RouterActions.login({type: 'replace'});
-    }else{
-      //this.props.loadUpcomingMeetings(this.props.providerType);
+    if(!!this.props.authenticatedProviders[this.props.providerType]) {
+      this.state.launchType = "start";
+      this.props.loadUpcomingMeetings(this.props.providerType);
     }
   }
 
@@ -72,10 +72,6 @@ class ProviderDashboardView extends React.Component {
       });
       this.beginScan();
     }
-
-    // if(nextProps.routeName === "providerDashboard" && this.props.routeName !== "providerDashboard") {
-    //   this.beginScan();
-    // }
   }
 
   componentWillUnmount() {
@@ -90,7 +86,31 @@ class ProviderDashboardView extends React.Component {
     this.props.stopScan();
   }
 
-  startMeeting = (peripheral, meetingType, deviceType) => {
+  launchMeeting = () => {
+    var meetingId;
+    if(this.state.launchType == "start") {
+      if(this.state.selectedMeetingId == "profileId") {
+        //start user
+        meetingId = this.props.profile.meetingId;
+        this.props.startMeetingWithId({
+            providerType: this.props.providerType,
+            peripheral: this.state.selectedPeripheral
+        }, meetingId);
+      }else{
+        this.props.startMeetingWithId({
+            providerType: this.props.providerType,
+            peripheral: this.state.selectedPeripheral
+        }, this.state.selectedMeetingId);
+      }
+    }else {
+      this.props.joinMeeting({
+        providerType: this.props.providerType,
+        peripheral: this.state.selectedPeripheral
+      }, "123456789");
+    }
+  }
+
+  startMeeting = () => {
     this.props.startMeeting({
       providerType: this.props.providerType,
       peripheral: this.state.selectedPeripheral,
@@ -110,18 +130,16 @@ class ProviderDashboardView extends React.Component {
   onMeetingIdSelected = (meetingId) => {
     this.setState((state) => {
       state.selectedMeetingId = meetingId;
-      state.hasValidLaunchInfo = !!state.selectedPeripheralId;
+      state.hasValidLaunchInfo = !!state.selectedPeripheral;
       return state;
     });
   }
 
   launchTypeSelected = (type) => {
-    
-    // TODO: Check user logged in state here
-    // if(type === 'start') {
-    //   this.props.requestAuthSignin();
-    //   return;
-    // }
+    if(type === 'start' && !this.props.authenticatedProviders[this.props.providerType]) {
+      this.props.requestAuthSignin();
+      return;
+    }
 
     this.setState((state) => {
       state.launchType = type;
@@ -138,6 +156,8 @@ class ProviderDashboardView extends React.Component {
   renderStartChoices = () => {
     return (
       <MeetingChoicesView
+        profileId={this.props.profile.profileId}
+        meetings={this.props.upcomingMeetings}
         onSelected={this.onMeetingIdSelected}
         selected={this.state.selectedMeetingId} />
     );
@@ -148,17 +168,9 @@ class ProviderDashboardView extends React.Component {
 
     if(launchRequested) {
       return (
-        <View style={styles.container}>
-          <View>
-            <ActivityIndicator size="large" color="#000" />
-          </View>
-          <View>
-            <Text>Lauching Meeting...</Text>
-          </View>
-        </View>
+        <LoadingView message="Launching Meeting" />
       );
     }
-    console.log(this.state.launchType);
 
     const clickableBtnStyle = {
       activeColor: Config.colors.lightGrey,
@@ -167,7 +179,7 @@ class ProviderDashboardView extends React.Component {
 
     const joinBtnStyle = (this.state.launchType == 'join') ? {} : clickableBtnStyle;
     const startBtnStyle = (this.state.launchType == 'start') ? {} : clickableBtnStyle;
-    //         {profile.avatarUrl && <Image style={{width: 40, height: 40}} source={{uri: profile.avatarUrl }} /> }
+
     return (
        <View style={styles.container}>
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
@@ -189,8 +201,8 @@ class ProviderDashboardView extends React.Component {
                 </View>
             </View>
           </View>
-          <View style={{paddingTop: 0, flex: 1, marginLeft: 20, marginRight: 20}}>
-            <View style={{flex: 1}}>
+          <View style={{paddingTop: 0, flex: 1}}>
+            <View style={{flex: 1, marginLeft: 20, marginRight: 20}}>
               {this.state.launchType == 'join' && this.renderJoinChoices()}
               {this.state.launchType == 'start' && this.renderStartChoices()}
             </View>
@@ -202,7 +214,8 @@ class ProviderDashboardView extends React.Component {
           <View style={{padding: 10, paddingLeft: 25, paddingRight: 25}}>
             <ProviderButton 
               disabled={!this.state.hasValidLaunchInfo} 
-              onPress={this.startMeeting} 
+              activeColor={Config.colors.primaryColor}
+              onPress={this.launchMeeting} 
               textAlign='center' 
               fontSize={20} 
               style={{paddingTop: 10, paddingBottom: 10}}>Launch Meeting</ProviderButton>
@@ -216,6 +229,9 @@ function mapStateToProps(state, ownProps) {
   const bluetoothState = state.bluetooth;
   const currentProviderType = state.provider.currentProviderType;
   const profile = state.provider.authenticatedProviders[currentProviderType].profile;
+  const upcomingMeetings = state.provider.authenticatedProviders[currentProviderType].upcomingMeetings;
+  
+    console.log(state.provider.authenticatedProviders[currentProviderType]);
   return {
     providerType: state.provider.currentProviderType,
     launchRequested: state.provider.launchRequested,
@@ -223,6 +239,7 @@ function mapStateToProps(state, ownProps) {
     authenticatedProviders: state.provider.authenticatedProviders,
     bluetoothState,
     profile,
+    upcomingMeetings,
     scene: state.routes.scene
   };
 }
@@ -231,7 +248,9 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     requestAuthSignin: () => dispatch(providerActions.requestAuthSignin()),
-    startMeeting: (options) => dispatch(providerActions.startMeeting(options)),
+    startMeeting: (options) => dispatch(providerActions.startAdHocMeeting(options)),
+    startMeetingWithId: (options, id) => dispatch(providerActions.startMeetingWithId(options, id)),
+    joinMeeting: (options, id) => dispatch(providerActions.joinMeeting(options, id)),
     loadUpcomingMeetings: (providerType) => dispatch(providerActions.loadUpcomingMeetings(providerType)),
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
     providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
@@ -242,7 +261,6 @@ function mapDispatchToProps(dispatch, ownProps) {
 
 
 const ProviderDashboard = connect(mapStateToProps, mapDispatchToProps)(ProviderDashboardView);
-
 export { ProviderDashboard };
 
 

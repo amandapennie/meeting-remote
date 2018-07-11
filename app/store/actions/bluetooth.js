@@ -45,7 +45,7 @@ export function scanForNewPeripherals() {
       // cannot store Peripheral instance in AppState, need to convert to simple object
       // noble will hold onto the proper Peripheral instance
       let peripheral = JSON.parse(peripheralInstance.toString());
-      //console.log(peripheral);
+      console.log(peripheral);
 
       var serviceUuid; 
       if(peripheralInstance.advertisement.serviceUuids){
@@ -132,6 +132,7 @@ export function attemptConnect(peripheral, noPrompt) {
       });
 
       instance.once('disconnect', function(){
+        console.log('disconnected ' + peripheral.id);
         dispatch(peripheralDisconnected(peripheral));
       });
 
@@ -144,12 +145,11 @@ export function attemptConnect(peripheral, noPrompt) {
     }
 
     function findInstanceAndConnect(){
-      console.log(peripheral);
-      console.log(peripheral.id);
-      console.log(noble._peripherals);
+      // console.log(peripheral.id);
+      // console.log(noble._peripherals.length);
       const peripheralInstance = noble._peripherals[peripheral.id];
-      console.log("insidee heeeer")
-      console.log(peripheralInstance);
+      // console.log("insidee heeeer")
+      // console.log(peripheralInstance);
       if(!peripheralInstance) {
         _scanForPeripheralId(peripheral.id, (err, foundPeripheral) => {
           if(!err && foundPeripheral) {

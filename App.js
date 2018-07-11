@@ -21,6 +21,8 @@ import {
 if (typeof process === 'undefined') process = {};
 process.nextTick = setImmediate;
 
+Array.prototype.isArray = true;
+
 // suppress warnings
 YellowBox.ignoreWarnings([
   'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.', 

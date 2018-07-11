@@ -7,7 +7,7 @@ import { Actions as RouterActions } from 'react-native-router-flux';
 import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
-import { track } from '../../tracking';
+import { track, identify } from '../../tracking';
 import {
   Sentry,
   SentrySeverity,
@@ -47,6 +47,14 @@ export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_
 export const meetingLinkShared = createAction(constants.PROVIDER_MEETING_LINK_SHARED);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
+
+function getExpirationForAccess(access) {
+    // set expiration time (minues 60 seconds)
+    const expiresInSeconds = parseInt(access.expires_in, 10);
+    const expires = new Date();
+    expires.setSeconds(expires.getSeconds() + (expiresInSeconds - 60));
+    return expires.getTime();
+}
 
 export function selectProvider(providerType) {
   return async function (dispatch, getState) {
@@ -100,6 +108,26 @@ export function requestAuthSignin() {
     }
 }
 
+function checkAndUpdateProviderAuth(providerType) {
+    return async function (dispatch, getState) {
+      const state = getState();
+      console.log("222222222");
+      const providerAuth = state.provider.authenticatedProviders[providerType];
+      console.log(providerAuth);
+      const checkResp = await gtm.checkStaleAccess(providerAuth.access);
+      if(checkResp.refreshed) {
+        console.log('refreshed auth token');
+        console.log(checkResp.access);
+        providerAuth.access = checkResp.access;
+        providerAuth.access.expiresAt = getExpirationForAccess(checkResp.access);
+        console.log("222222222BB");
+        console.log(providerAuth);
+        dispatch(providerAuthReceived({providerType, providerAuth}));
+      }
+      return providerAuth;
+    }
+}
+
 export function handleAuthResponse(providerType, access) {
   return async function (dispatch, getState) {
   	  const oauthProfile = {
@@ -107,6 +135,10 @@ export function handleAuthResponse(providerType, access) {
   	  	lastName: access.lastName,
   	  	email: access.email
   	  };
+
+      identify(access.account_key, oauthProfile);
+
+      access.expiresAt = getExpirationForAccess(access);
 
       gtm.getProfileInformation(access)
       .then((gtmProfile) => {
@@ -116,7 +148,38 @@ export function handleAuthResponse(providerType, access) {
   }
 }
 
-export function startMeeting(options) {
+export function startMeetingWithId(options, meetingId) {
+  return async function (dispatch, getState) {
+      const {providerType, peripheral, meetingType, deviceType} = options;
+      dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
+      const {access} = getState().provider.authenticatedProviders[providerType];
+      //only supports gtm for now
+      gtm.startMeetingApiCall(access, meetingId)
+      .then((resp) => {
+        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostURL, meetingId: meetingId}));
+        dispatch(bluetoothActions.associatePeripheral(peripheral));
+      });
+  }
+}
+
+export function startAdHocMeeting(options) {
+  return async function (dispatch, getState) {
+      const {providerType, peripheral, meetingType, deviceType} = options;
+      dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
+      const {access} = getState().provider.authenticatedProviders[providerType];
+      //only supports gtm for now
+      gtm.getAdHocGtmLauchUrl(access)
+      .then((resp) => {
+        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+        dispatch(bluetoothActions.associatePeripheral(peripheral));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+export function joinMeeting(options, id) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
       console.log(options);
@@ -136,8 +199,7 @@ export function startMeeting(options) {
 
 export function endMeeting(options) {
   return async function (dispatch, getState) {
-          console.log("pop");
-                RouterActions.pop();
+      RouterActions.pop();
       const {providerType, peripheral, meetingId} = options;
       dispatch(providerSessionKillRequested({providerType, meetingId}));
       const {access} = getState().provider.authenticatedProviders[providerType];
@@ -154,24 +216,32 @@ export function endMeeting(options) {
   }
 }
 
+
 export function loadUpcomingMeetings(providerType) {
   return async function (dispatch, getState) {
     if(providerType != 'gtm') {
       throw "unknown provider";
     }
 
-    const state = getState();
-    const access = state.provider.authenticatedProviders[providerType].access;
-
     dispatch(providerLoadUpcomingMtgsStart({providerType}));
 
-    gtm.loadUpcomingMeetings(access)
+    console.log("111111")
+    const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
+
+    console.log("333333");
+    console.log(providerAuth);
+
+    gtm.loadUpcomingMeetings(providerAuth.access)
     .then((upcomingMeetings) => {
       dispatch(providerLoadUpcomingMtgsEnded({providerType, upcomingMeetings}));
     })
     .catch((err) => {
+      if(err === 403) {
+        RouterActions.login({type: 'replace'});
+        return;
+      }
       dispatch(providerLoadUpcomingMtgsError(err));
-    })
+    });
   }
 }
 
@@ -179,7 +249,7 @@ export function shareLink(meetingId) {
   return async function (dispatch, getState) {
       Share.share({
           message: 'Join my meeting!',
-          url: `https://gotomeet.me/${meetingId}`,
+          url: `https://global.gotomeeting.com/join/${meetingId}`,
           title: 'Share meeting link'
       });
       dispatch(meetingLinkShared({meetingId}));
