@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { gtm } from '../../providers';
+import * as providerActions from '../../store/actions/provider';
 import { formatId, cleanId } from '@getgo/format-meeting-id';
 
 
@@ -38,9 +39,9 @@ export default class JoinMeetingView extends React.Component {
   validate = targetValue => {
     if (targetValue) {
       if (targetValue.includes(this.profileIdPrefix)) {
-        gtm.checkProfileId(targetValue.replace(this.profileIdPrefix, ''));
+        this.props.checkProfileId(targetValue.replace(this.profileIdPrefix, ''));
       } else {
-        gtm.checkMeetingId(targetValue.replace(/-/g, ''));
+        this.props.checkMeetingId(targetValue.replace(/-/g, ''));
       }
     }
   };
@@ -62,6 +63,10 @@ export default class JoinMeetingView extends React.Component {
     });
   };
 
+  hasValidJoinCode = (joinMeetingInputValue) => {
+    return this.validateOnChange(this.state.joinMeetingInputValue);
+  };
+
   render() {
     return (
       <View>
@@ -74,7 +79,7 @@ export default class JoinMeetingView extends React.Component {
             placeholder="Enter a Meeting ID or name"
             placeholderTextColor="#666666"
             value={this.state.joinMeetingInputValue}/>
-          </View>
+        </View>
       </View> 
     );
   }

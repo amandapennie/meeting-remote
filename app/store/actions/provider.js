@@ -30,6 +30,8 @@ export const constants = {
   PROVIDER_SESSION_KILLED: 'provider/PROVIDER_SESSION_KILLED',
   PROVIDER_SESSION_KILL_ERROR: 'provider/PROVIDER_SESSION_KILL_ERROR',
   PROVIDER_MEETING_LINK_SHARED: 'provider/PROVIDER_MEETING_LINK_SHARED',
+  PROVIDER_VALIDATE_MEETING: 'provider/PROVIDER_VALIDATE_MEETING',
+  PROVIDER_VALIDATE_MEETING_ERROR: 'provider/PROVIDER_VALIDATE_MEETING_ERROR',
   ERROR: 'autoreduce provider/ERROR',
 };
 
@@ -45,6 +47,9 @@ export const providerSessionKillRequested = createAction(constants.PROVIDER_SESS
 export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KILLED);
 export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
 export const meetingLinkShared = createAction(constants.PROVIDER_MEETING_LINK_SHARED);
+export const validateMeeting = createAction(constants.PROVIDER_VALIDATE_MEETING);
+export const validateMeetingError = createAction(constants.PROVIDER_VALIDATE_MEETING_ERROR);
+
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
 
 
@@ -132,6 +137,36 @@ export function startMeeting(options) {
         console.log(err);
       });
   }
+}
+
+export function checkMeetingId(meetingId) { 
+  return async function (dispatch, getState) {
+    gtm.checkMeetingId(meetingId)
+      .then((resp) => {
+        dispatch(validateMeeting({meetingId: resp.meetingId}));
+      })
+      .catch((err) => {
+        dispatch(validateMeetingError(err));
+        console.log(err);
+      });
+  };
+}
+
+export function checkProfileId(profileId) { 
+  return async function (dispatch, getState) {
+    if (profileId.indexOf('.') >= 0) {
+      dispatch(validateMeetingError(undefined));
+        return Promise.resolve();
+    }
+    return gtm.checkProfileId(profileId)
+        .then((resp) => {
+          dispatch(validateMeeting({profileId: resp.profileId}));
+        })
+        .catch((err) => {
+          dispatch(validateMeetingError(err));
+          console.log(err);
+        });
+  };
 }
 
 export function endMeeting(options) {

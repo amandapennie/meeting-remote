@@ -297,5 +297,7 @@ export default {
 	getAdHocGtmLauchUrl,
 	getProfileInformation,
 	loadUpcomingMeetings,
-	killSession
+	killSession,
+	checkProfileId,
+	checkMeetingId
 }
