@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  TextStyle,
   StyleSheet,
   Text,
-  ListView,
-  ViewStyle,
-  TouchableOpacity,
-  ScrollView,
-  FlatList,
-  TextInput,
-  Dimensions
+  View
 } from 'react-native';
 
-import LinearGradient from 'react-native-linear-gradient';
+import Config from '../config';
 
 
 export default class LoadingView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true, ...Dimensions.get('window') };
+    this.state = { loading: true };
   }
 
   onPress = () => {
@@ -28,12 +21,14 @@ export default class LoadingView extends React.Component {
 
   render() {
     return (
-      <LinearGradient start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}} colors={['#515f75', '#886952', '#515f75']} style={styles.container}>
-          <ActivityIndicator
-            color="#ffffff"
-            style={{ position: "absolute", top: this.state.height / 2, left: (this.state.width / 2) - 15 }}
-            size="large" />
-      </LinearGradient> 
+      <View style={styles.container}>
+          <View>
+            <ActivityIndicator
+              color="#ffffff"
+              size="large" />
+            <Text style={{color: '#ffffff', marginTop: 10}}>{this.props.message}</Text>
+          </View>
+      </View> 
     );
   }
 }
@@ -41,7 +36,10 @@ export default class LoadingView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 25
+    marginTop: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Config.colors.darkGrey
   },
   button: {
     backgroundColor: "#fa7c2d",

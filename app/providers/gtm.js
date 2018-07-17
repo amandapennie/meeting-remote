@@ -21,12 +21,12 @@ function getAdHocGtmLauchUrl(access) {
 			return startMeetingApiCall(access, meetingId);
 	    })
 	    .then((startResp) => {
-			if(!startResp.hostURL) {
+			if(!startResp.hostUrl) {
 				reject("Error creating start url");
 				return;
 			}
 
-			resolve({hostUrl: startResp.hostURL, meetingId: meetingId});
+			resolve({hostUrl: startResp.hostUrl, meetingId: meetingId});
 	        
 	    });	
 	});
@@ -46,12 +46,12 @@ function startMeetingApiCall(access, meetingId) {
 		  headers,
 		})
 		.then((response) => {
-			return response.json()
+			response.json().then((respJson) => {
+				return resolve({hostUrl: respJson.hostURL});
+			});
 		})
-		.then((startResp) => {
-	      return resolve(startResp);
-	    })
 	    .catch((err) => {
+	    	console.log(err);
 	    	reject(err);
 	    });
   });
@@ -59,7 +59,6 @@ function startMeetingApiCall(access, meetingId) {
 
 function createMeetingApiCall(access) {
   return new bluebird.Promise(function(resolve, reject) {
-  	   console.log(access);
   	    const headers = {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json',
@@ -67,13 +66,17 @@ function createMeetingApiCall(access) {
 			'Authorization': `OAuth oauth_token=${access.access_token}`
 		};
 
+		var startTime = new Date();
+		var endTime = new Date();
+		endTime.setTime(startTime.getTime() + (1*60*60*1000));
+
   		fetch('https://api.getgo.com/G2M/rest/meetings', {
 		  method: 'POST',
 		  headers,
 		  body: JSON.stringify({
 			    subject: "ad-hoc meeting",
-			    starttime: "2018-06-26T05:00:00Z",
-			    endtime: "2018-06-26T06:00:00Z",
+			    starttime: startTime.toISOString(),
+			    endtime: endTime.toISOString(),
 			    passwordrequired: false,
 			    conferencecallinfo: "Hybrid",
 			    timezonekey: "",
@@ -176,18 +179,18 @@ function loadUpcomingMeetings(access) {
 		  headers,
 		})
 		.then((response) => {
-			return response.json()
+			if(response.status === 403) {
+				return reject(403)
+			}
+			return response.json();
 		})
 		.then((upcomingResp) => {
 	      return resolve(upcomingResp);
-	    })
-	    .catch((err) => {
-	    	reject(err);
 	    });
   });
 }
 
-function getAccessJwt(access) {
+function getAccessJwt(access, profileMeetingId) {
 	// this function is a cheat
 	// since the public goto api api.getgo.com does not have a profile method
 	// we get a start url, which give us a temporary access token
@@ -293,11 +296,43 @@ function getProfileInformation(access) {
 	});
 }
 
+function checkStaleAccess(access) {
+	// check to see if access is still valid and refresh it if not
+	return new bluebird.Promise(function(resolve, reject) {
+		// check expiration
+		if(access.expiresAt > new Date().getTime()) {
+			return resolve({refreshed: false, access});
+    	}
+
+		const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		};
+
+  		fetch('https://mtg-remote.herokuapp.com/oauth/gtm/refresh', {
+		  method: 'POST',
+		  headers,
+		  body: JSON.stringify(access)
+		})
+		.then((response) => {
+			return response.json();
+		})
+		.then((refreshResp) => {
+	      return resolve({refreshed: true, access: refreshResp});
+	    })
+	    .catch((err) => {
+	    	reject(err);
+	    });
+	});
+}
+
 export default {
 	getAdHocGtmLauchUrl,
+	startMeetingApiCall,
 	getProfileInformation,
 	loadUpcomingMeetings,
 	killSession,
 	checkProfileId,
-	checkMeetingId
+	checkMeetingId,
+	checkStaleAccess
 }

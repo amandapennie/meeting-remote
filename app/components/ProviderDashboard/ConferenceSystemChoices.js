@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Animated,
   ActivityIndicator,
   Button,
   TextStyle,
@@ -19,55 +20,36 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 
 class ConferenceSystemListItem extends React.PureComponent {
+  state = {
+    fadeAnim: new Animated.Value(0),  // Initial value for opacity: 0
+  }
+
+  componentDidMount() {
+    Animated.timing(                
+      this.state.fadeAnim,            
+      {
+        toValue: 1,                   
+        duration: 500,              
+      }
+    ).start();                        
+  }
+
   _onPress = () => {
     this.props.onPressItem(this.props.item);
   };
 
   render() {
-    const textColor = this.props.selected ? "#fa7c2d" : "#cfdaee";
+    const textColor = this.props.selected ? Config.colors.darkGrey : Config.colors.darkGrey;
+    const bgColor = this.props.selected ? "#ffffff" : Config.colors.lightGrey;
 
     return (
-      <TouchableOpacity onPress={this._onPress}>
-        <View style={{flex: 1, flexDirection: 'row'}}>
-            <View style={{padding: 15}}>
-              <Icon name="tv" size={30} color={textColor} />
-            </View>
-            <View style={{padding: 15}}>
-              <Text style={{ color: textColor }}>
-                {this.props.title}
-              </Text>
-              <Text>{this.props.id}</Text>
-            </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
-
-
-class ConferenceSystemSelectList extends React.PureComponent {
-  _keyExtractor = (item, index) => item.id.toString();
-
-  _onPressItem = (id) => {
-    this.props.onSelected(id);
-  };
-
-  _renderItem = ({item}) => (
-    <ConferenceSystemListItem
-      id={item.id}
-      item={item}
-      onPressItem={this._onPressItem}
-      selected={(this.props.selected) ? this.props.selected.id == item.id : false}
-      title={item.advertisement.localName} />
-  );
-
-  render() {
-    return (
-      <FlatList
-        data={this.props.data}
-        extraData={this.props}
-        keyExtractor={this._keyExtractor}
-        renderItem={this._renderItem} />
+      <Animated.View style={{opacity: this.state.fadeAnim, width: '48%', margin:5}}>
+        <TouchableOpacity onPress={this._onPress} style={{padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
+            <Text style={{ color: textColor }}>
+              {this.props.item.advertisement.localName} - {this.props.item.rssi}
+            </Text>
+        </TouchableOpacity>
+      </Animated.View>
     );
   }
 }
@@ -90,9 +72,17 @@ export default class ConferenceSystemChoicesView extends React.Component {
       );
     }
 
-    const discoveredPeripherals = Object.values(bluetoothState.discoveredPeripherals);
+    //console.log(bluetoothState.nearestPeripherals);
+    const discoveredPeripherals = bluetoothState.nearestPeripherals;
+    const emptiesLength =  (discoveredPeripherals.length >= 4) ? 0 : 4 - discoveredPeripherals.length;
+    var data = [];
+    for(var i = 0; i < emptiesLength; i++) {
+        data.push({});
+    }
+    const choices = discoveredPeripherals.concat(data);
+
     return (
-      <View style={{paddingTop: 10, backgroundColor: Config.colors.mediumGrey}}>
+      <View style={{flex: 0.5, paddingTop: 10, paddingLeft: 20, paddingRight: 20, backgroundColor: Config.colors.mediumGrey}}>
           <View style={{flexDirection: 'row'}}>
               <View style={{flex:1}}>
                 <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Conference Rooms Near Me:</Text>
@@ -101,11 +91,26 @@ export default class ConferenceSystemChoicesView extends React.Component {
                 <ActivityIndicator animating={bluetoothState.scanning} size="small" color="#fff" />
               </View>
           </View>
-          <View style={{flex: 1}}>
-              <ConferenceSystemSelectList 
-                data={discoveredPeripherals} 
-                selected={this.props.selected}
-                onSelected={this.props.onSelected} />
+              <View>
+                <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 12, textAlign: 'center'}}>select conference room to begin</Text>
+              </View>
+          <View style={{flex: 1, flexWrap: 'wrap'}}>
+              { choices && choices.map((item, i) => {
+                    if(item.id){
+                      return (
+                          <ConferenceSystemListItem 
+                                key={item.id} 
+                                item={item} 
+                                selected={this.props.selected && this.props.selected.id === item.id}
+                                onPressItem={this.props.onSelected} />
+                      );
+                    }else{
+                      return (
+                            <View key={i} onPress={this._onPress} style={{width: '48%',  margin:5, padding: 10, backgroundColor: Config.colors.darkGrey, borderRadius: 5}}><Text>{` `}</Text></View>
+                      );
+                    }
+                }
+              )}
           </View>
       </View>
     );

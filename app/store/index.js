@@ -13,6 +13,7 @@ import { bluetoothMiddleware } from './middleware';
 const persistConfig = {
  key: 'root',
  storage: storage,
+ 
 };
 
 // TODO make sure that on logout we are cleaning the state

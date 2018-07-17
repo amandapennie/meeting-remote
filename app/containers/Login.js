@@ -43,9 +43,7 @@ export class ProviderLoginView extends React.Component {
   render() {
     if(this.state.processingAuthResp) {
       return (
-        <View style={{marginTop: 20, flex: 1}}>
-          <LoadingView />
-        </View>
+        <LoadingView message="Authenticating..." />
       );
     }
 

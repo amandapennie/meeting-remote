@@ -14,3 +14,11 @@ export function track(event, properties) {
 		properties
 	});
 }
+
+//https://segment.com/docs/sources/server/node/#identify
+export function identify(userId, traits) {
+	analytics.identify({
+		userId,
+		traits
+	});
+}
