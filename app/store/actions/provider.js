@@ -189,7 +189,7 @@ export function startMeetingWithId(options, meetingId) {
         if(resp.int_err_code) {
           throw new Error(resp.int_err_code);
         }
-        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: meetingId}));
+        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       });
   }
@@ -203,7 +203,7 @@ export function startAdHocMeeting(options) {
       //only supports gtm for now
       gtm.getAdHocGtmLauchUrl(access)
       .then((resp) => {
-        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: resp.meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       })
       .catch((err) => {
@@ -214,18 +214,12 @@ export function startAdHocMeeting(options) {
 
 export function joinMeeting(options, id) {
   return async function (dispatch, getState) {
+    console.log("inside join");
       const {providerType, peripheral, meetingType, deviceType} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
-      const {access} = getState().provider.authenticatedProviders[providerType];
       //only supports gtm for now
-      gtm.getAdHocGtmLauchUrl(access)
-      .then((resp) => {
-        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: resp.meetingId}));
-        dispatch(bluetoothActions.associatePeripheral(peripheral));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      dispatch(providerLaunchCodeGranted({providerType, launchType: 'join', meetingId: id}));
+      dispatch(bluetoothActions.associatePeripheral(peripheral));
   }
 }
 
@@ -233,7 +227,8 @@ export function checkMeetingId(meetingId) {
   return async function (dispatch, getState) {
     gtm.checkMeetingId(meetingId)
       .then((resp) => {
-        dispatch(validateMeeting({meetingId: resp.meetingId}));
+        console.log(resp);
+        dispatch(validateMeeting({code: resp.meetingId, meetingId: resp.meetingId}));
       })
       .catch((err) => {
         dispatch(validateMeetingError(err));
@@ -250,7 +245,8 @@ export function checkProfileId(profileId) {
     }
     return gtm.checkProfileId(profileId)
         .then((resp) => {
-          dispatch(validateMeeting({profileId: resp.profileId}));
+          console.log(resp);
+          dispatch(validateMeeting({code: resp.profileId, meetingId: resp.meetingId}));
         })
         .catch((err) => {
           dispatch(validateMeetingError(err));

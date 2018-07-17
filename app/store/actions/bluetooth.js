@@ -158,9 +158,13 @@ export function attemptConnect(peripheral, noPrompt) {
           // gtm specific code
           console.log('connected now sending launch data');
           console.log(launchData);
-          var queryData = url.parse(launchData.launchCode, true).query;
-          const token = queryData.authenticationToken;
-          dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
+          if(launchData.launchType == "start"){
+            var queryData = url.parse(launchData.launchCode, true).query;
+            const token = queryData.authenticationToken;
+            dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
+          }else{
+            dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
+          }
         }else{
           // no launch data, why are we connecting???
         }

@@ -46,7 +46,7 @@ class ConferenceSystemListItem extends React.PureComponent {
       <Animated.View style={{opacity: this.state.fadeAnim, width: '48%', margin:5}}>
         <TouchableOpacity onPress={this._onPress} style={{padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
             <Text style={{ color: textColor }}>
-              {this.props.item.advertisement.localName} - {this.props.item.rssi}
+              {this.props.item.advertisement.localName}
             </Text>
         </TouchableOpacity>
       </Animated.View>

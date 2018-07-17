@@ -46,9 +46,8 @@ export default class JoinMeetingView extends React.Component {
     }
   };
 
-  onJoinCodeChange = (event) => {
-    const input = event.target.value;
-    const targetValue = formatId(cleanId(input, this.profileIdPrefix), this.profileIdPrefix);
+  onJoinCodeChange = (text) => {
+    const targetValue = formatId(cleanId(text, this.profileIdPrefix), this.profileIdPrefix);
 
     this.setState({
       joinMeetingInputValue: targetValue,
@@ -68,17 +67,22 @@ export default class JoinMeetingView extends React.Component {
   };
 
   render() {
+    console.log(this.state.joinMeetingInputValue !== "");
+    const hasValidCode = (this.state.joinMeetingInputValue === "" || typeof this.props.validJoinCode !== 'undefined');
+    const bColor = (hasValidCode) ? 'gray' : 'red';
     return (
       <View>
         <View style={{paddingTop: 50}}>
           <TextInput
             autoFocus={true}
-            style={{height: 40, borderColor: 'gray', textAlign: 'center', borderWidth: 1, backgroundColor: "#ffffff"}}
+            style={{height: 40, borderColor: bColor, textAlign: 'center', borderWidth: 1, backgroundColor: "#ffffff"}}
             onBlur={Keyboard.dismiss}
             onChangeText={this.onJoinCodeChange}
             placeholder="Enter a Meeting ID or name"
             placeholderTextColor="#666666"
             value={this.state.joinMeetingInputValue}/>
+          { hasValidCode && <Text style={{color: 'gray', textAlign: 'center', padding: 5}}>For example, 123-456-789 or 'name' for gotomeet.me/name</Text> }
+          { !hasValidCode && <Text style={{color: 'red', textAlign: 'center', padding: 5}}>This meeting ID is invalid. Please check your invitation and try again</Text> }
         </View>
       </View> 
     );

@@ -54,6 +54,9 @@ export default handleActions(
       return Object.assign({}, state, {launchData: action.payload});
     },
 
+    [actions.constants.PROVIDER_VALIDATE_MEETING]: (state, action) => {
+      return Object.assign({}, state, {validJoinCode: action.payload.code, joinMeetingId: action.payload.meetingId});
+    },
 
     [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED]: (state, action) => {
       const providersByType = {};

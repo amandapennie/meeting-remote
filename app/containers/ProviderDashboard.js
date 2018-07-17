@@ -90,6 +90,21 @@ class ProviderDashboardView extends React.Component {
        this.props.bluetoothState.scanning === false) {
       this.beginScan()
     }
+
+    if(this.state.launchType == 'join' && 
+      !!this.state.selectedPeripheral) {
+        if(typeof nextProps.validJoinCode !== 'undefined') {
+          this.setState((state) => {
+            state.hasValidLaunchInfo = true;
+            return state;
+          });
+        }else{
+          this.setState((state) => {
+            state.hasValidLaunchInfo = false;
+            return state;
+          });
+        }
+    }
   }
 
   componentWillUnmount() {
@@ -124,7 +139,7 @@ class ProviderDashboardView extends React.Component {
       this.props.joinMeeting({
         providerType: this.props.providerType,
         peripheral: this.state.selectedPeripheral
-      }, "123456789");
+      }, this.props.joinMeetingId);
     }
   }
 
@@ -139,8 +154,18 @@ class ProviderDashboardView extends React.Component {
 
   onPeripheralSelected = (peripheral) => {
     this.setState((state) => {
+      var validLaunchInfo = false;
+      if(this.state.launchType === 'start') {
+        validLaunchInfo = !!state.selectedMeetingId;
+      }
+
+      if(this.state.launchType === 'join') {
+        console.log(typeof this.props.validJoinCode);
+        validLaunchInfo = typeof this.props.validJoinCode !== 'undefined';
+      }
+
       state.selectedPeripheral = peripheral;
-      state.hasValidLaunchInfo = !!state.selectedMeetingId;
+      state.hasValidLaunchInfo = validLaunchInfo;
       return state;
     });
   }
@@ -159,15 +184,29 @@ class ProviderDashboardView extends React.Component {
       return;
     }
 
+    var validLaunchInfo = false;
+
+    if(type === 'start') {
+      validLaunchInfo = !!this.state.selectedMeetingId && !!this.state.selectedPeripheral;
+    }
+
+    if(type === 'join') {
+      validLaunchInfo = !!this.state.selectedPeripheral && typeof this.props.validJoinCode !== 'undefined';
+    }
+
     this.setState((state) => {
       state.launchType = type;
+      state.hasValidLaunchInfo = validLaunchInfo;
       return state;
     });
   }
 
   renderJoinChoices = () => {
     return (
-      <JoinMeetingView />
+      <JoinMeetingView 
+        validJoinCode={this.props.validJoinCode}
+        checkMeetingId={this.props.checkMeetingId} 
+        checkProfileId={this.props.checkProfileId} />
     );
   }
 
@@ -260,6 +299,8 @@ function mapStateToProps(state, ownProps) {
     authenticatedProviders: state.provider.authenticatedProviders,
     bluetoothState,
     profile,
+    validJoinCode: state.provider.validJoinCode,
+    joinMeetingId: state.provider.joinMeetingId,
     upcomingMeetings,
     scene: state.routes.scene
   };
@@ -277,6 +318,8 @@ function mapDispatchToProps(dispatch, ownProps) {
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
     providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
     providerValidateMeeting: () => dispatch(providerActions.providerValidateMeeting()),
+    checkProfileId: (code) => dispatch(providerActions.checkProfileId(code)),
+    checkMeetingId: (code) => dispatch(providerActions.checkMeetingId(code)),
     scanForNewPeripherals: () => dispatch(bluetoothActions.scanForNewPeripherals()),
     stopScan: () => dispatch(bluetoothActions.stopScan())
   };

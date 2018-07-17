@@ -21,7 +21,6 @@ export function bluetoothMiddleware(store) {
 function initBluetooth(store) {
 	// triggered when bluetooth hardware changes (poweredOn/poweredOff)
 	noble.on('stateChange', function(bluetoothHardwareState) {
-		console.log('hardware state change ' +bluetoothHardwareState);
 		store.dispatch(bleActions.hardwareStateUpdate(bluetoothHardwareState));
 	});
 }
