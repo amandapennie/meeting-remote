@@ -16,100 +16,71 @@ import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import { Scene, Router, ActionConst } from 'react-native-router-flux';
 import { Stopwatch } from 'react-native-stopwatch-timer';
+import StarRating from 'react-native-star-rating';
 import * as providerActions from '../store/actions/provider';
+import { track } from '../tracking';
 import Config from '../config';
-import MeetingChoicesView from '../components/ProviderDashboard/MeetingChoices';
-import JoinMeetingView from '../components/ProviderDashboard/JoinMeeting';
-import ConferenceSystemChoicesView from '../components/ProviderDashboard/ConferenceSystemChoices';
 import ProviderButton from '../components/ProviderButton';
 import HorizontalRule from '../components/HorizontalRule';
 
-class SessionView extends React.Component {
+class MeetingReviewView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stopwatchStart: true, //true to see if it auto starts
-      stopwatchReset: false,
+      starCount: 1
     };
-    this.toggleStopwatch = this.toggleStopwatch.bind(this);
-    this.resetStopwatch = this.resetStopwatch.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    // if(Object.keys(nextProps.bluetoothState.connectedPeripherals).length == 0){
-    //   RouterActions.pop();
-    // }
+  onStarRatingPress = (rating) => {
+    this.setState({
+      starCount: rating
+    });
   }
-
-// toggle when container is opened
-  toggleStopwatch() {
-    this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset:false});
-  }
-
-  resetStopwatch() {
-    this.setState({stopwatchStart: false, stopwatchReset: true});
-  }
-
-  getFormattedTime(time) {
-    time = time.substring(3);
-    return time;
-  };
 
   render() {
-    const { profile } = this.props;
-
-    const clickableBtnStyle = {
-      activeColor: Config.colors.lightGrey,
-      activeTextColor: Config.colors.darkGrey
-    }
-
+    const {profile} = this.props;
     return (
        <View style={styles.container}>
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
-            {profile && <TouchableOpacity><Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text></TouchableOpacity> }
+            {profile && <Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text> }
             <HorizontalRule />
           </View>
-          <View style={{padding: 30, paddingLeft: 25, paddingRight: 25}}>
-            <ProviderButton
-              onPress={this._onPressInvite} 
-              textAlign='center' 
-              fontSize={20} 
-              style={{paddingTop: 10, paddingBottom: 10,}}{...clickableBtnStyle}>{`SHARE MEETING LINK`}</ProviderButton>
-            <Text style={styles.text}>Sitting all alone? Invite others to join your meeting. Click the button to share your meeting link by email, text, Slack, etc.</Text>
-          </View>
-          <View style={{padding:30, flex: 1, marginLeft: 20, marginRight: 20}}>
-            <View>
-              <Stopwatch laps start={this.state.stopwatchStart}
-                reset={this.state.stopwatchReset}
-                options={options}
-                getTime={this.getFormattedTime} />
-            </View>
-            <Text style={{padding: 10, fontSize: 16, color: Config.colors.lightGrey, textAlign: 'center'}}> Meeting Timer </Text>
+          <View style={{flex:1, padding: 30, paddingLeft: 25, paddingRight: 25}}>
+            <Text style={{color: "#ffffff", textAlign: 'center', fontSize: 24, marginBottom: 35}}>How well did this app help you start your meeting?</Text>
+            <StarRating
+              emptyStarColor={Config.colors.lightGrey}
+              fullStarColor={Config.colors.primaryColor}
+              disabled={false}
+              maxStars={5}
+              rating={this.state.starCount}
+              selectedStar={this.onStarRatingPress} />
           </View>
           <View style={{padding: 30, paddingLeft: 25, paddingRight: 25}}>
             <ProviderButton
-              onPress={this._onPressEndMeeting} 
+              onPress={this._onPressRate} 
               textAlign='center' 
               fontSize={20} 
-              style={{paddingTop: 10, paddingBottom: 10}}{...clickableBtnStyle}>{`END MEETING`}</ProviderButton>
+              style={{paddingTop: 10, paddingBottom: 10}}>{`Rate ${this.state.starCount} star${(this.state.starCount==1)?"":"s"}`}</ProviderButton>
             <Text style={styles.text}>Have feedback? We would love to hear from you. Reach out to us at support@meetingremote.com</Text>
+            <TouchableOpacity style={{margin: 25}} onPress={this._onPressSkip}>
+                          <Text style={{color: "#ffffff", textAlign: 'center', fontSize: 20, marginBottom: 10}}>Skip Rating</Text>
+            </TouchableOpacity>
           </View>
         </View>
     );
   }
 
-  _onPressInvite = () => {
-    this.props.shareLink(this.props.meetingId);
+  _onPressRate = () => {
+    track('MEETING_END_RATED', {
+      rating: this.state.starCount
+    });
+    RouterActions.reset('providerDashboard');
   }
 
-  _onPressEndMeeting = () => {
-    this.props.endMeeting({
-      providerType: this.props.providerType,
-      peripheral: this.props.peripheral,
-      meetingId: this.props.meetingId
-    });
-    RouterActions.meetingReview({type: 'replace'});
+  _onPressSkip = () => {
+    track('MEETING_END_RATING_SKIPPED', {});
+    RouterActions.reset('providerDashboard');
   }
 }
 
@@ -135,8 +106,8 @@ function mapDispatchToProps(dispatch, ownProps) {
   };
 }
 
-const Session = connect(mapStateToProps, mapDispatchToProps)(SessionView);
-export { Session };
+const MeetingReview = connect(mapStateToProps, mapDispatchToProps)(MeetingReviewView);
+export { MeetingReview };
 
 
 const options = {

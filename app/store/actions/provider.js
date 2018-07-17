@@ -20,6 +20,7 @@ const INCLUDE_DUPES = false;
 export const constants = {
   PROVIDER_SELECTED: 'provider/PROVIDER_SELECTED',
   PROVIDER_AUTH_RECEIVED: 'provider/PROVIDER_AUTH_RECEIVED', 
+  PROVIDER_AUTH_CLEARED: 'provider/PROVIDER_CLEARED', 
   PROVIDER_LAUNCH_REQUESTED: 'provider/PROVIDER_LAUNCH_REQUESTED', 
   PROVIDER_LAUNCH_REQUEST_ENDED: 'provider/PROVIDER_LAUNCH_REQUEST_ENDED',
   PROVIDER_LAUNCH_CODE_GRANTED: 'provider/PROVIDER_LAUNCH_CODE_GRANTED', 
@@ -35,6 +36,7 @@ export const constants = {
 
 export const providerSelected = createAction(constants.PROVIDER_SELECTED);
 export const providerAuthReceived = createAction(constants.PROVIDER_AUTH_RECEIVED);
+export const providerAuthCleared = createAction(constants.PROVIDER_AUTH_CLEARED);
 export const providerLaunchRequested = createAction(constants.PROVIDER_LAUNCH_REQUESTED);
 export const providerLaunchRequestEnded = createAction(constants.PROVIDER_LAUNCH_REQUEST_ENDED);
 export const providerLaunchCodeGranted = createAction(constants.PROVIDER_LAUNCH_CODE_GRANTED);
@@ -64,7 +66,7 @@ export function selectProvider(providerType) {
         "provider" : providerType,
         "supported" : true
       });
-//RouterActions.login({type: 'push'});
+      //RouterActions.login({type: 'push'});
       const { authenticatedProviders } = getState().provider;
       if(authenticatedProviders.hasOwnProperty(providerType)) {
         RouterActions.providerDashboard({type: 'push'});
@@ -111,17 +113,11 @@ export function requestAuthSignin() {
 function checkAndUpdateProviderAuth(providerType) {
     return async function (dispatch, getState) {
       const state = getState();
-      console.log("222222222");
       const providerAuth = state.provider.authenticatedProviders[providerType];
-      console.log(providerAuth);
       const checkResp = await gtm.checkStaleAccess(providerAuth.access);
       if(checkResp.refreshed) {
-        console.log('refreshed auth token');
-        console.log(checkResp.access);
         providerAuth.access = checkResp.access;
         providerAuth.access.expiresAt = getExpirationForAccess(checkResp.access);
-        console.log("222222222BB");
-        console.log(providerAuth);
         dispatch(providerAuthReceived({providerType, providerAuth}));
       }
       return providerAuth;
@@ -148,6 +144,34 @@ export function handleAuthResponse(providerType, access) {
   }
 }
 
+export function confirmLogout() {
+  return async function (dispatch, getState) {
+      const state = getState();
+      const providerType = state.provider.currentProviderType;
+      const profile = state.provider.authenticatedProviders[providerType].profile;
+      Alert.alert(
+        'Logout?',
+        `Are you sure you want to logout as "${profile.email}"`,
+        [
+          { text: 'Cancel', 
+            onPress: () => {
+              track('USER_LOGOUT_CANCELED');
+            }, 
+            style: 'cancel'
+          },
+          { text: 'Logout', 
+            onPress: () => {
+              dispatch(providerAuthCleared({providerType}))
+              RouterActions.providerDashboard({type: 'replace'}); 
+              track('USER_LOGOUT');
+            }
+          },
+        ],
+        { cancelable: false }
+      )
+  }
+}
+
 export function startMeetingWithId(options, meetingId) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
@@ -156,7 +180,11 @@ export function startMeetingWithId(options, meetingId) {
       //only supports gtm for now
       gtm.startMeetingApiCall(access, meetingId)
       .then((resp) => {
-        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostURL, meetingId: meetingId}));
+        console.log(resp);
+        if(resp.int_err_code) {
+          throw new Error(resp.int_err_code);
+        }
+        dispatch(providerLaunchCodeGranted({providerType, launchCode: resp.hostUrl, meetingId: meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       });
   }
@@ -182,7 +210,6 @@ export function startAdHocMeeting(options) {
 export function joinMeeting(options, id) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
-      console.log(options);
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       const {access} = getState().provider.authenticatedProviders[providerType];
       //only supports gtm for now
@@ -199,7 +226,6 @@ export function joinMeeting(options, id) {
 
 export function endMeeting(options) {
   return async function (dispatch, getState) {
-      RouterActions.pop();
       const {providerType, peripheral, meetingId} = options;
       dispatch(providerSessionKillRequested({providerType, meetingId}));
       const {access} = getState().provider.authenticatedProviders[providerType];
@@ -225,11 +251,7 @@ export function loadUpcomingMeetings(providerType) {
 
     dispatch(providerLoadUpcomingMtgsStart({providerType}));
 
-    console.log("111111")
     const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
-
-    console.log("333333");
-    console.log(providerAuth);
 
     gtm.loadUpcomingMeetings(providerAuth.access)
     .then((upcomingMeetings) => {

@@ -21,12 +21,12 @@ function getAdHocGtmLauchUrl(access) {
 			return startMeetingApiCall(access, meetingId);
 	    })
 	    .then((startResp) => {
-			if(!startResp.hostURL) {
+			if(!startResp.hostUrl) {
 				reject("Error creating start url");
 				return;
 			}
 
-			resolve({hostUrl: startResp.hostURL, meetingId: meetingId});
+			resolve({hostUrl: startResp.hostUrl, meetingId: meetingId});
 	        
 	    });	
 	});
@@ -46,11 +46,10 @@ function startMeetingApiCall(access, meetingId) {
 		  headers,
 		})
 		.then((response) => {
-			return response.json()
+			response.json().then((respJson) => {
+				return resolve({hostUrl: respJson.hostURL});
+			});
 		})
-		.then((startResp) => {
-	      return resolve(startResp);
-	    })
 	    .catch((err) => {
 	    	console.log(err);
 	    	reject(err);
@@ -60,7 +59,6 @@ function startMeetingApiCall(access, meetingId) {
 
 function createMeetingApiCall(access) {
   return new bluebird.Promise(function(resolve, reject) {
-  	   console.log(access);
   	    const headers = {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json',
@@ -144,7 +142,7 @@ function loadUpcomingMeetings(access) {
   });
 }
 
-function getAccessJwt(access) {
+function getAccessJwt(access, profileMeetingId) {
 	// this function is a cheat
 	// since the public goto api api.getgo.com does not have a profile method
 	// we get a start url, which give us a temporary access token

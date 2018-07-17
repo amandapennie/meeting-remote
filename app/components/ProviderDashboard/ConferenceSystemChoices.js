@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Animated,
   ActivityIndicator,
   Button,
   TextStyle,
@@ -19,6 +20,20 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 
 class ConferenceSystemListItem extends React.PureComponent {
+  state = {
+    fadeAnim: new Animated.Value(0),  // Initial value for opacity: 0
+  }
+
+  componentDidMount() {
+    Animated.timing(                
+      this.state.fadeAnim,            
+      {
+        toValue: 1,                   
+        duration: 500,              
+      }
+    ).start();                        
+  }
+
   _onPress = () => {
     this.props.onPressItem(this.props.item);
   };
@@ -28,11 +43,13 @@ class ConferenceSystemListItem extends React.PureComponent {
     const bgColor = this.props.selected ? "#ffffff" : Config.colors.lightGrey;
 
     return (
-      <TouchableOpacity onPress={this._onPress} style={{width: '48%', margin:5, padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
-          <Text style={{ color: textColor }}>
-            {this.props.item.advertisement.localName}
-          </Text>
-      </TouchableOpacity>
+      <Animated.View style={{opacity: this.state.fadeAnim, width: '48%', margin:5}}>
+        <TouchableOpacity onPress={this._onPress} style={{padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
+            <Text style={{ color: textColor }}>
+              {this.props.item.advertisement.localName} - {this.props.item.rssi}
+            </Text>
+        </TouchableOpacity>
+      </Animated.View>
     );
   }
 }
@@ -55,27 +72,14 @@ export default class ConferenceSystemChoicesView extends React.Component {
       );
     }
 
-    const discoveredPeripherals = Object.values(bluetoothState.discoveredPeripherals);
-    //sort for closest rooms
-    discoveredPeripherals.sort((a,b) => { 
-      if (a.rssi > b.rssi) {
-        return 1
-      } 
-
-      if(b.rssi > a.rssi) {
-        return -1;
-      }
-
-      return 0;
-    });
-    console.log(discoveredPeripherals.length);
+    //console.log(bluetoothState.nearestPeripherals);
+    const discoveredPeripherals = bluetoothState.nearestPeripherals;
     const emptiesLength =  (discoveredPeripherals.length >= 4) ? 0 : 4 - discoveredPeripherals.length;
     var data = [];
     for(var i = 0; i < emptiesLength; i++) {
         data.push({});
     }
     const choices = discoveredPeripherals.concat(data);
-
 
     return (
       <View style={{flex: 0.5, paddingTop: 10, paddingLeft: 20, paddingRight: 20, backgroundColor: Config.colors.mediumGrey}}>
@@ -96,7 +100,6 @@ export default class ConferenceSystemChoicesView extends React.Component {
                       return (
                           <ConferenceSystemListItem 
                                 key={item.id} 
-                                id={item.id} 
                                 item={item} 
                                 selected={this.props.selected && this.props.selected.id === item.id}
                                 onPressItem={this.props.onSelected} />

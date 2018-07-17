@@ -19,12 +19,22 @@ export default handleActions(
       return Object.assign({}, state, {authenticatedProviders: newData});
     },
 
+    [actions.constants.PROVIDER_AUTH_CLEARED]: (state, action) => {
+      delete state.authenticatedProviders[action.payload.providerType];
+      const newData = Object.assign({}, state.authenticatedProviders);
+      return Object.assign({}, state, {authenticatedProviders: newData});
+    },
+
     [actions.constants.PROVIDER_LAUNCH_REQUESTED]: (state, action) => {
       return Object.assign({}, state, {launchRequested: true});
     },
 
     [actions.constants.PROVIDER_LAUNCH_REQUEST_ENDED]: (state, action) => {
       return Object.assign({}, state, {launchRequested: false, launchData: null});
+    },
+
+    [bleActions.constants.BLE_PERIPHERAL_CONNECT_TIMEOUT]: (state, action) => {
+      return Object.assign({}, state, {launchRequested: false});
     },
 
     [actions.constants.PROVIDER_SESSION_KILL_REQUESTED]: (state, action) => {

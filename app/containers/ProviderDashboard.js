@@ -52,16 +52,15 @@ class ProviderDashboardView extends React.Component {
     if(this.props.launchRequested) {
       this.props.providerLaunchRequestEnded();
     }
-      
-    this.beginScan();
+
+    console.log(this.props.bluetoothState.bluetoothHardwareState);
+    if(this.props.bluetoothState.bluetoothHardwareState === "poweredOn"){
+      this.beginScan();
+    }
     
   }
 
   componentWillReceiveProps(nextProps) {
-    if(Object.keys(nextProps.bluetoothState.connectedPeripherals).length > 0){
-      RouterActions.session({type: 'push'});
-    }
-
     if(this.props.launchData && nextProps.launchData === null) {
       this.setState((state) => {
         state.selectedMeetingId = "profileId";
@@ -69,7 +68,27 @@ class ProviderDashboardView extends React.Component {
         state.hasValidLaunchInfo = false;
         return state;
       });
-      this.beginScan();
+
+      if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn"){
+        this.beginScan();
+      }
+    }
+
+    if(this.props.launchRequested && !nextProps.launchRequested && 
+        nextProps.bluetoothState.bluetoothHardwareState === "poweredOn") {
+        //launch was killed, possibly because of timeout connecting to peripheral
+        this.setState((state) => {
+          state.selectedPeripheral = null;
+          state.hasValidLaunchInfo = false;
+          return state;
+        });
+        this.beginScan();
+    }
+
+    if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn" &&
+       this.props.bluetoothState.bluetoothHardwareState !== "poweredOn" &&
+       this.props.bluetoothState.scanning === false) {
+      this.beginScan()
     }
   }
 
@@ -183,7 +202,7 @@ class ProviderDashboardView extends React.Component {
        <View style={styles.container}>
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
-            {profile && <Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text> }
+            {profile && <TouchableOpacity onPress={this.props.confirmLogout}><Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text></TouchableOpacity> }
             <HorizontalRule />
           </View>
           <View style={{marginLeft: 20, marginRight: 20, paddingTop: 20}}>
@@ -227,10 +246,13 @@ class ProviderDashboardView extends React.Component {
 function mapStateToProps(state, ownProps) { 
   const bluetoothState = state.bluetooth;
   const currentProviderType = state.provider.currentProviderType;
-  const profile = state.provider.authenticatedProviders[currentProviderType].profile;
-  const upcomingMeetings = state.provider.authenticatedProviders[currentProviderType].upcomingMeetings;
+  var profile = {};
+  var upcomingMeetings = [];
+  if(state.provider.authenticatedProviders[currentProviderType]){
+    profile = state.provider.authenticatedProviders[currentProviderType].profile;
+    upcomingMeetings = state.provider.authenticatedProviders[currentProviderType].upcomingMeetings;
+  }
   
-    console.log(state.provider.authenticatedProviders[currentProviderType]);
   return {
     providerType: state.provider.currentProviderType,
     launchRequested: state.provider.launchRequested,
@@ -247,6 +269,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     requestAuthSignin: () => dispatch(providerActions.requestAuthSignin()),
+    confirmLogout: () => dispatch(providerActions.confirmLogout()),
     startMeeting: (options) => dispatch(providerActions.startAdHocMeeting(options)),
     startMeetingWithId: (options, id) => dispatch(providerActions.startMeetingWithId(options, id)),
     joinMeeting: (options, id) => dispatch(providerActions.joinMeeting(options, id)),

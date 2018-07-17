@@ -15,7 +15,8 @@ import {
   ProviderDashboard,
   Main,
   Unsupported,
-  Session
+  Session,
+  MeetingReview
 } from './app/containers';
 
 if (typeof process === 'undefined') process = {};
@@ -25,6 +26,7 @@ Array.prototype.isArray = true;
 
 // suppress warnings
 YellowBox.ignoreWarnings([
+  'Remote debugger is in a background tab which may cause apps to perform slowly. Fix this by foregrounding the tab (or opening it in a separate window).',
   'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.', 
   'Module RCTImageLoader',
   'Module RNBLE requires main queue setup since it overrides `init` but doesn\'t implement `requiresMainQueueSetup`. In a future release React Native will default to initializing all native modules on a background thread unless explicitly opted-out of.'
@@ -40,12 +42,13 @@ Sentry.setTagsContext({
 
 const scenes = Actions.create(
   <Scene key="root">
-      <Scene key="session" component={Session} hideNavBar={true} title="Session"/>
       <Scene key="landing" component={Landing} hideNavBar={true} title="Landing"/>
       <Scene key="main" component={Main} hideNavBar={true} title="Main"/>
       <Scene key="providerDashboard" component={ProviderDashboard} hideNavBar={true} title="ProviderDashboard"/>
+      <Scene key="session" component={Session} hideNavBar={true} title="Session"/>
       <Scene key="connected" component={Connected} hideNavBar={true} title="Connected"/>
       <Scene key="login" component={Login} hideNavBar={true} title="Login"/>
+      <Scene key="meetingReview" component={MeetingReview} hideNavBar={true} title="Review"/>
       <Scene key="unsupported" component={Unsupported} hideNavBar={false} title="Unsupported"/>
   </Scene>
 );
