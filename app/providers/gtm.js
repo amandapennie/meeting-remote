@@ -95,6 +95,54 @@ function createMeetingApiCall(access) {
   });
 };
 
+function checkMeetingId(meetingId) {
+  return new bluebird.Promise(function(resolve, reject) {
+		const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'User-Agent': 'Meeting-Remote',
+		};
+
+		fetch(`https://global.gotomeeting.com/rest/2/meetings/${meetingId}`, {
+		  method: 'GET',
+		  headers
+		})	
+		.then((response) => {
+			return response.json()
+		})
+		.then((startResp) => {
+			return resolve(startResp);
+		})
+		.catch((err) => {
+			reject(err);
+		});
+	});
+};
+
+function checkProfileId(profileId) {
+  return new bluebird.Promise(function(resolve, reject) {
+		const headers = {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'User-Agent': 'Meeting-Remote',
+		};
+
+		fetch(`https://global.gotomeeting.com/rest/2/profiles/${profileId}`, {
+		  method: 'GET',
+		  headers
+		})	
+		.then((response) => {
+			return response.json()
+		})
+		.then((startResp) => {
+			return resolve(startResp);
+		})
+		.catch((err) => {
+			reject(err);
+		});
+	});
+};
+
 function deleteMeeting(access, meetingId) {
   return new bluebird.Promise(function(resolve, reject) {
   	    const headers = {
@@ -284,5 +332,7 @@ export default {
 	getProfileInformation,
 	loadUpcomingMeetings,
 	killSession,
+	checkProfileId,
+	checkMeetingId,
 	checkStaleAccess
 }

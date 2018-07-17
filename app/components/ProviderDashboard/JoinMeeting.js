@@ -16,17 +16,56 @@ import {
   Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
+import { gtm } from '../../providers';
+import * as providerActions from '../../store/actions/provider';
+import { formatId, cleanId } from '@getgo/format-meeting-id';
 
 
 export default class JoinMeetingView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {code: null};
+    this.state = {
+      joinMeetingInputValue: '',
+    };
+    this.joinMeetingIdTimer = '';
+    this.profileIdPrefix = 'gotomeet.me/';
   }
 
-  onJoinCodeChange = (text) => {
-
+  validateOnChange = targetValue => {
+    clearTimeout(this.joinMeetingIdTimer);
+    this.joinMeetingIdTimer = setTimeout(this.validate, 500, targetValue);
   }
+
+  validate = targetValue => {
+    if (targetValue) {
+      if (targetValue.includes(this.profileIdPrefix)) {
+        this.props.checkProfileId(targetValue.replace(this.profileIdPrefix, ''));
+      } else {
+        this.props.checkMeetingId(targetValue.replace(/-/g, ''));
+      }
+    }
+  };
+
+  onJoinCodeChange = (event) => {
+    const input = event.target.value;
+    const targetValue = formatId(cleanId(input, this.profileIdPrefix), this.profileIdPrefix);
+
+    this.setState({
+      joinMeetingInputValue: targetValue,
+    });
+
+    this.validateOnChange(targetValue);
+  };
+
+  clearInputValidation = () => {
+    this.setState({
+      joinMeetingInputValue: ''
+    });
+  };
+
+  hasValidJoinCode = (joinMeetingInputValue) => {
+    return this.validateOnChange(this.state.joinMeetingInputValue);
+  };
 
   render() {
     return (
@@ -39,8 +78,8 @@ export default class JoinMeetingView extends React.Component {
             onChangeText={this.onJoinCodeChange}
             placeholder="Enter a Meeting ID or name"
             placeholderTextColor="#666666"
-            value={this.state.code}/>
-          </View>
+            value={this.state.joinMeetingInputValue}/>
+        </View>
       </View> 
     );
   }

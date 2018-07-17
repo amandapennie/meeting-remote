@@ -276,6 +276,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     loadUpcomingMeetings: (providerType) => dispatch(providerActions.loadUpcomingMeetings(providerType)),
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
     providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
+    providerValidateMeeting: () => dispatch(providerActions.providerValidateMeeting()),
     scanForNewPeripherals: () => dispatch(bluetoothActions.scanForNewPeripherals()),
     stopScan: () => dispatch(bluetoothActions.stopScan())
   };
