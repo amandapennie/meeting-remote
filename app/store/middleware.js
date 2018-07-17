@@ -1,8 +1,9 @@
 import noble from 'react-native-ble';
 import {constants as initActions} from './actions/init';
-import { hardwareStateUpdate } from './actions/bluetooth';
+import * as bleActions from './actions/bluetooth';
 import {constants as conferenceSystemsActions} from './actions/conferenceSystems';
 
+var _rssiCheckInterval;
 
 export function bluetoothMiddleware(store) {
 	return function(next){ 
@@ -20,6 +21,7 @@ export function bluetoothMiddleware(store) {
 function initBluetooth(store) {
 	// triggered when bluetooth hardware changes (poweredOn/poweredOff)
 	noble.on('stateChange', function(bluetoothHardwareState) {
-		store.dispatch(hardwareStateUpdate(bluetoothHardwareState));
+		console.log('hardware state change ' +bluetoothHardwareState);
+		store.dispatch(bleActions.hardwareStateUpdate(bluetoothHardwareState));
 	});
 }

@@ -31,9 +31,9 @@ export default class JoinMeetingView extends React.Component {
   render() {
     return (
       <View>
-        <Text style={{color: "#cfdaee", marginLeft: 10, fontSize: 18}}>or Join a meeting:</Text>
-        <View style={{padding: 10}}>
+        <View style={{paddingTop: 50}}>
           <TextInput
+            autoFocus={true}
             style={{height: 40, borderColor: 'gray', textAlign: 'center', borderWidth: 1, backgroundColor: "#ffffff"}}
             onBlur={Keyboard.dismiss}
             onChangeText={this.onJoinCodeChange}

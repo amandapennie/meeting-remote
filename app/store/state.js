@@ -38,6 +38,8 @@ export function getInitialState() {
     bluetooth: {
       bluetoothHardwareState: 'poweredOff',
       discoveredPeripherals: {},
+      nearestPeripherals: [],
+      nearestPeripheralsIds: [],
       connectedPeripherals: {},
       associatingUuid: null,
       scanning: false,

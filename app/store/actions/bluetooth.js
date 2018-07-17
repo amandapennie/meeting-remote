@@ -1,8 +1,9 @@
 import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
+import { Actions as RouterActions } from 'react-native-router-flux';
 import noble from 'react-native-ble';
-import { BLE_CONF_SYSTEM_SERVICE_ID } from 'react-native-dotenv';
+import { BLE_CONF_SYSTEM_SERVICE_ID, BLE_CONF_SYSTEM_CHARACTERISTIC_ID } from 'react-native-dotenv';
 import { Buffer } from 'buffer'
 import url from 'url';
 
@@ -13,10 +14,12 @@ export const constants = {
   BLE_SCAN_START: 'bluetooth/BLE_SCAN_START',
   BLE_SCAN_START_ERROR: 'bluetooth/BLE_SCAN_START_ERROR',
   BLE_SCAN_END: 'bluetooth/BLE_SCAN_END',
-  BLE_PERIPHERAL_DISCOVERED: 'bluetooth/BLE_PERIPHERAL_DISCOVERED',
+  BLE_PERIPHERAL_DISCOVERED: 'bluetooth/BLE_PERIPHERAL_UPDATED',
+  BLE_PERIPHERAL_UPDATED: 'bluetooth/BLE_PERIPHERAL_DISCOVERED',
   BLE_PERIPHERAL_ASSOCIATE_START: 'bluetooth/BLE_PERIPHERAL_ASSOCIATE_START',
   BLE_PERIPHERAL_CONNECTED: 'bluetooth/BLE_PERIPHERAL_CONNECTED',
   BLE_PERIPHERAL_DISCONNECTED: 'bluetooth/BLE_PERIPHERAL_DISCONNECTED',
+  BLE_PERIPHERAL_CONNECT_TIMEOUT: 'BLE_PERIPHERAL_CONNECT_TIMEOUT',
   ERROR: 'autoreduce bluetooth/ERROR',
   states : {
   	UNKNOWN : "unknown",
@@ -33,11 +36,22 @@ export const scanStart = createAction(constants.BLE_SCAN_START);
 export const scanStartError = createAction(constants.BLE_SCAN_START_ERROR);
 export const scanEnd = createAction(constants.BLE_SCAN_END);
 export const peripheralDiscovered = createAction(constants.BLE_PERIPHERAL_DISCOVERED);
+export const peripheralUpdated = createAction(constants.BLE_PERIPHERAL_UPDATED);
 export const peripheralAssociateStart = createAction(constants.BLE_PERIPHERAL_ASSOCIATE_START);
 export const peripheralConnected = createAction(constants.BLE_PERIPHERAL_CONNECTED);
 export const peripheralDisconnected = createAction(constants.BLE_PERIPHERAL_DISCONNECTED);
+export const peripheralConnectTimeout = createAction(constants.BLE_PERIPHERAL_CONNECT_TIMEOUT);
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta);
 
+var _launchConnectTimeout;
+
+//maybe put this in a higher location
+const defaultErrorHandler = ErrorUtils.getGlobalHandler();
+ErrorUtils.setGlobalHandler((err, isFatal) => {
+  if(err.message !== "service.discoverCharacteristics is not a function") {
+    defaultErrorHandler(err, isFatal);
+  }
+});
 
 export function scanForNewPeripherals() {
   return async function (dispatch, getState) {
@@ -45,7 +59,6 @@ export function scanForNewPeripherals() {
       // cannot store Peripheral instance in AppState, need to convert to simple object
       // noble will hold onto the proper Peripheral instance
       let peripheral = JSON.parse(peripheralInstance.toString());
-      //console.log(peripheral);
 
       var serviceUuid; 
       if(peripheralInstance.advertisement.serviceUuids){
@@ -66,14 +79,17 @@ export function scanForNewPeripherals() {
       };
 
       dispatch(peripheralDiscovered(peripheral));
+      //dispatch(checkForRssiUpdates(peripheralInstance));
 
-      //console.log(noble._peripherals);
     });
 
   	noble.startScanning(
       [], 
-      INCLUDE_DUPES, 
-      (err) => (!err) ? dispatch(scanStart()) : dispatch(scanStartError(err)));
+      true, 
+      (err) => {
+        console.log(err);
+        (!err) ? dispatch(scanStart()) : dispatch(scanStartError(err));
+      });
   };
 }
 
@@ -95,6 +111,24 @@ export function associatePeripheral(peripheral) {
   };
 }
 
+export function connectTimeout() {
+  return async function(dispatch) {
+      dispatch(peripheralConnectTimeout());
+      Alert.alert(
+        'Launch Error',
+        'We cannot connect to this device, it may be out of range.',
+        [
+          { text: 'Ok', 
+            onPress: () => {
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+      track('LAUNCH_TIMEOUT');
+  }
+}
+
 // Attempt to connect to bluetooth peripheral
 export function attemptConnect(peripheral, noPrompt) {
   return async function (dispatch, getState) {
@@ -113,18 +147,20 @@ export function attemptConnect(peripheral, noPrompt) {
 
     function connect(instance){
       instance.once('connect', function(){
+        clearTimeout(_launchConnectTimeout);
         dispatch(peripheralConnected(peripheral));
         if(state.scanning){ dispatch(stopScan()); }
 
         const { launchData } = getState().provider;
 
-        console.log(launchData);
         if(launchData) {
+          RouterActions.session({type: 'replace'});
           // gtm specific code
           console.log('connected now sending launch data');
+          console.log(launchData);
           var queryData = url.parse(launchData.launchCode, true).query;
           const token = queryData.authenticationToken;
-          dispatch(sendMessage(peripheral, `start|${token}|${launchData.meetingId}`));
+          dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
         }else{
           // no launch data, why are we connecting???
         }
@@ -132,24 +168,26 @@ export function attemptConnect(peripheral, noPrompt) {
       });
 
       instance.once('disconnect', function(){
+        console.log('disconnected ' + peripheral.id);
         dispatch(peripheralDisconnected(peripheral));
       });
 
       instance.connect(function(err){
         if(err) {
+          console.log(err);
           if(state.scanning){ dispatch(stopScan()); }
           dispatch(setError(err));
         }
       });
+
+      _launchConnectTimeout = setTimeout(() => {
+        instance.disconnect(); // cancel pending connect
+        dispatch(connectTimeout())
+      }, 10000);
     }
 
     function findInstanceAndConnect(){
-      console.log(peripheral);
-      console.log(peripheral.id);
-      console.log(noble._peripherals);
       const peripheralInstance = noble._peripherals[peripheral.id];
-      console.log("insidee heeeer")
-      console.log(peripheralInstance);
       if(!peripheralInstance) {
         _scanForPeripheralId(peripheral.id, (err, foundPeripheral) => {
           if(!err && foundPeripheral) {
@@ -169,8 +207,8 @@ export function attemptConnect(peripheral, noPrompt) {
       findInstanceAndConnect();  
     }else{
       Alert.alert(
-        'Connect Jacket',
-        'Connect to jacket via Bluetooth?',
+        'Connect System',
+        'Connect to system via Bluetooth?',
         [
           {text: 'Cancel'},
           {text: 'OK', onPress: () => findInstanceAndConnect() },
@@ -195,8 +233,8 @@ export function attemptDisconnect(peripheral, noPrompt) {
       disconnect();
     }else{
       Alert.alert(
-        'Disconnect Jacket',
-        'Disconnect jacket from Bluetooth?',
+        'Disconnect System',
+        'Disconnect system from Bluetooth?',
         [
           {text: 'Cancel'},
           {text: 'OK', onPress: () => disconnect() },
@@ -204,6 +242,33 @@ export function attemptDisconnect(peripheral, noPrompt) {
       );
     }
   };
+}
+
+export function checkForRssiUpdates(peripheralInstance) {
+  return async function (dispatch, getState) {
+    console.log("running check");
+    const state = getState();
+    const discoveredPeripherals = state.bluetooth.discoveredPeripherals;
+
+    peripheralInstance.updateRssi((error, updatedRssi) => {
+      if(error) {
+        console.log('rssi update error');
+        console.log(error);
+        return;
+      }
+      if(originalRssi !== updatedRssi) {
+        console.log("updated rssi");
+        peripheral.rssi = updatedRssi;
+        dispatch(peripheralUpdated(peripheral));
+      }else{
+        console.log("same rssi");
+      }
+
+      if(state.bluetooth.scanning);
+      dispatch(checkForRssiUpdates(peripheralInstance));
+    });
+
+  }
 }
 
 function str2ab(str) {
@@ -218,31 +283,14 @@ function str2ab(str) {
 export function sendMessage(peripheral, message) {
   return async function (dispatch, getState) {
       const peripheralInstance = noble._peripherals[peripheral.id];
-
-      // conferenceSystemCharacteristicUuid
-      peripheralInstance.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
+      const serviceUuid = peripheral.advertisement.serviceUuids[0];
+      peripheralInstance.discoverSomeServicesAndCharacteristics([serviceUuid], [BLE_CONF_SYSTEM_CHARACTERISTIC_ID], (error, services, characteristics) => {
         if(error) {
           console.log(error);
         }
         const characteristic = characteristics[0];
         characteristic.write(Buffer.from(message, 'utf8'), false, (error) => {if(error){console.log(error)} } );
-
       });
-  };
-}
-
-// toggle bluetooth connect/disconnect for jacket
-export function toggleBluetooth(jacket, noPrompt) {
-  return async function(dispatch){
-    if (jacket.isConnectedJacket !== 'true') {
-      return;
-    }
-
-    if(jacket.bluetoothConnected) {
-      dispatch(attemptDisconnect({id:jacket.peripheralId}, noPrompt))
-    }else{
-      dispatch(attemptConnect({id:jacket.peripheralId}, noPrompt))   
-    }
   };
 }
 
