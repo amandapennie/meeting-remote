@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import noble from 'react-native-ble';
+import { track } from '../../tracking';
 import { BLE_CONF_SYSTEM_SERVICE_ID, BLE_CONF_SYSTEM_CHARACTERISTIC_ID } from 'react-native-dotenv';
 import { Buffer } from 'buffer'
 import url from 'url';
@@ -48,7 +49,7 @@ var _launchConnectTimeout;
 //maybe put this in a higher location
 const defaultErrorHandler = ErrorUtils.getGlobalHandler();
 ErrorUtils.setGlobalHandler((err, isFatal) => {
-  if(err.message !== "service.discoverCharacteristics is not a function") {
+  if(!err.message.includes("discoverCharacteristics is not a function")) {
     defaultErrorHandler(err, isFatal);
   }
 });
