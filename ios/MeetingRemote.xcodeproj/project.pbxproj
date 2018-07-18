@@ -1488,7 +1488,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote22;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
 				PRODUCT_NAME = MeetingRemote;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1519,7 +1519,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote22;
+				PRODUCT_BUNDLE_IDENTIFIER = com.logmein.ios.meetingremote;
 				PRODUCT_NAME = MeetingRemote;
 				PROVISIONING_PROFILE = "4740e01c-7c67-4eec-8f6c-974a70136ddb";
 				PROVISIONING_PROFILE_SPECIFIER = "MeetingRemote App Store";

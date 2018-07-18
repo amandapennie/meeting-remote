@@ -227,7 +227,10 @@ export function attemptDisconnect(peripheral, noPrompt) {
     function disconnect(){
       const peripheralInstance = noble._peripherals[peripheral.id];
       if(peripheralInstance) {
-        peripheralInstance.disconnect((err) => { (err) => (!err) ? dispatch(peripheralDisconnected({id: peripheral.id})) : console.log(err); });
+        dispatch(sendMessage(peripheral, "end"));
+        setTimeout(() => {
+                  peripheralInstance.disconnect((err) => { (err) => (!err) ? dispatch(peripheralDisconnected({id: peripheral.id})) : console.log(err); });
+        }, 2000);
       }else{
         dispatch(peripheralDisconnected({id: peripheral.id}));
       }
