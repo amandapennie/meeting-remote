@@ -14,15 +14,16 @@ export default handleActions(
 
   	[actions.constants.PROVIDER_AUTH_RECEIVED]: (state, action) => {
       const providersByType = {};
+      const currentUserId = action.payload.userId;
       providersByType[action.payload.providerType] = action.payload.providerAuth;
       const newData = Object.assign({}, state.authenticatedProviders, providersByType);
-      return Object.assign({}, state, {authenticatedProviders: newData});
+      return Object.assign({}, state, {authenticatedProviders: newData, currentUserId});
     },
 
     [actions.constants.PROVIDER_AUTH_CLEARED]: (state, action) => {
       delete state.authenticatedProviders[action.payload.providerType];
       const newData = Object.assign({}, state.authenticatedProviders);
-      return Object.assign({}, state, {authenticatedProviders: newData});
+      return Object.assign({}, state, {authenticatedProviders: newData, currentUserId: null});
     },
 
     [actions.constants.PROVIDER_LAUNCH_REQUESTED]: (state, action) => {

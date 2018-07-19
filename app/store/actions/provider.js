@@ -7,7 +7,7 @@ import { Actions as RouterActions } from 'react-native-router-flux';
 import * as bluetoothActions from './bluetooth';
 import { gtm } from '../../providers';
 import { isTypeSupported } from '../../providers';
-import { track, identify } from '../../tracking';
+import { track, identify, DEVICE_ID } from '../../tracking';
 import {
   Sentry,
   SentrySeverity,
@@ -66,8 +66,9 @@ function getExpirationForAccess(access) {
 export function selectProvider(providerType) {
   return async function (dispatch, getState) {
     dispatch(providerSelected(providerType));
+    const userId = getState().provider.currentUserId;
     if (isTypeSupported(providerType)) {
-      track("Provider_Selected", {
+      track("Provider_Selected", userId, {
         "provider" : providerType,
         "supported" : true
       });
@@ -81,7 +82,7 @@ export function selectProvider(providerType) {
         return;
       }
     } else {
-      track("Provider_Selected", {
+      track("Provider_Selected", userId, {
         "provider" : providerType,
         "supported" : false
       })
@@ -93,20 +94,21 @@ export function selectProvider(providerType) {
 
 export function requestAuthSignin() {
     return async function (dispatch, getState) {
+        const userId = getState().provider.currentUserId;
         Alert.alert(
         'Authentication Required',
         'Please sign in to GoToMeeting to start using Meeting Remote',
         [
           { text: 'Cancel', 
             onPress: () => {
-              track('SIGN_IN_ALERT_CANCELED');
+              track('SIGN_IN_ALERT_CANCELED', userId);
             }, 
             style: 'cancel'
           },
           { text: 'Sign In', 
             onPress: () => {
               RouterActions.login({type: 'replace'}); 
-              track('SIGN_IN_ALERT_GRANTED');
+              track('SIGN_IN_ALERT_GRANTED', userId);
             }
           },
         ],
@@ -137,14 +139,16 @@ export function handleAuthResponse(providerType, access) {
   	  	email: access.email
   	  };
 
-      identify(access.account_key, oauthProfile);
+      const userId = access.account_key;
+      identify(userId, oauthProfile);
+      track('USER_LOGIN', userId, oauthProfile);
 
       access.expiresAt = getExpirationForAccess(access);
 
       gtm.getProfileInformation(access)
       .then((gtmProfile) => {
         const providerAuth = {access, profile: Object.assign(oauthProfile, gtmProfile)};
-        dispatch(providerAuthReceived({providerType, providerAuth}));
+        dispatch(providerAuthReceived({providerType, providerAuth, userId: access.account_key}));
       });
   }
 }
@@ -152,6 +156,7 @@ export function handleAuthResponse(providerType, access) {
 export function confirmLogout() {
   return async function (dispatch, getState) {
       const state = getState();
+      const userId = state.provider.currentUserId;
       const providerType = state.provider.currentProviderType;
       const profile = state.provider.authenticatedProviders[providerType].profile;
       Alert.alert(
@@ -160,7 +165,7 @@ export function confirmLogout() {
         [
           { text: 'Cancel', 
             onPress: () => {
-              track('USER_LOGOUT_CANCELED');
+              track('USER_LOGOUT_CANCELED', userId);
             }, 
             style: 'cancel'
           },
@@ -168,7 +173,7 @@ export function confirmLogout() {
             onPress: () => {
               dispatch(providerAuthCleared({providerType}))
               RouterActions.providerDashboard({type: 'replace'}); 
-              track('USER_LOGOUT');
+              track('USER_LOGOUT', userId);
             }
           },
         ],
@@ -181,9 +186,9 @@ export function startMeetingWithId(options, meetingId) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
-      const {access} = getState().provider.authenticatedProviders[providerType];
+      const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
       //only supports gtm for now
-      gtm.startMeetingApiCall(access, meetingId)
+      gtm.startMeetingApiCall(providerAuth.access, meetingId)
       .then((resp) => {
         console.log(resp);
         if(resp.int_err_code) {
@@ -199,9 +204,9 @@ export function startAdHocMeeting(options) {
   return async function (dispatch, getState) {
       const {providerType, peripheral, meetingType, deviceType} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
-      const {access} = getState().provider.authenticatedProviders[providerType];
+      const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
       //only supports gtm for now
-      gtm.getAdHocGtmLauchUrl(access)
+      gtm.getAdHocGtmLauchUrl(providerAuth.access)
       .then((resp) => {
         dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: resp.meetingId}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
@@ -261,6 +266,8 @@ export function endMeeting(options) {
       dispatch(providerSessionKillRequested({providerType, meetingId}));
       const {access} = getState().provider.authenticatedProviders[providerType];
       dispatch(bluetoothActions.attemptDisconnect(peripheral, true));
+      const userId = getState().provider.currentUserId;
+      track('MEETING_END_TRIGGERED', userId, {meetingId});
       //only supports gtm for now
       gtm.killSession(access, meetingId)
       .then((resp) => {
@@ -306,5 +313,7 @@ export function shareLink(meetingId) {
           title: 'Share meeting link'
       });
       dispatch(meetingLinkShared({meetingId}));
+      const userId = getState().provider.currentUserId;
+      track('MEETING_SHARE_TRIGGERED', userId, {meetingId});
   }
 }

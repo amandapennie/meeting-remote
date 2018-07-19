@@ -5,17 +5,16 @@ import DeviceInfo from 'react-native-device-info';
 const analytics = new Analytics((__DEV__) ? "0IrQ4C4Ik64KABwz5lYXr1ohMQKWfV2V" : "jI8QHtyds2oHFGevqRV02t2IiEioYhWx");
 
 export const DEVICE_ID = DeviceInfo.getUniqueID();
-var _userId;
 
 //https://segment.com/docs/sources/server/node/#track
-export function track(event, properties) {
+export function track(event, userId, properties) {
 	const data = {
 		event, 
 		properties
 	};
 
-	if(_userId){
-		data['userId'] = _userId;
+	if(userId){
+		data['userId'] = userId;
 	}else{
 		data['anonymousId'] = DEVICE_ID;
 	}
@@ -25,9 +24,16 @@ export function track(event, properties) {
 
 //https://segment.com/docs/sources/server/node/#identify
 export function identify(userId, traits) {
-	_userId = userId;
 	analytics.identify({
+		anonymousId: DEVICE_ID,
 		userId,
 		traits
+	});
+}
+
+export function alias(previousId, userId) {
+	analytics.alias({
+		userId,
+		previousId
 	});
 }

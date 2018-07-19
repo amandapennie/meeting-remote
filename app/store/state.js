@@ -26,7 +26,8 @@ export function getInitialState() {
     provider: {
       currentProviderType: 'gtm',
       authenticatedProviders: {},
-      launchRequested: false
+      launchRequested: false,
+      currentUserId: null
     },
 
     session: {

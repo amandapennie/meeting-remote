@@ -27,7 +27,7 @@ class MeetingReviewView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      starCount: 1
+      starCount: 4.5
     };
   }
 
@@ -72,14 +72,14 @@ class MeetingReviewView extends React.Component {
   }
 
   _onPressRate = () => {
-    track('MEETING_END_RATED', {
+    track('MEETING_END_RATED', this.props.userId, {
       rating: this.state.starCount
     });
     RouterActions.reset('providerDashboard');
   }
 
   _onPressSkip = () => {
-    track('MEETING_END_RATING_SKIPPED', {});
+    track('MEETING_END_RATING_SKIPPED', this.props.userId, {});
     RouterActions.reset('providerDashboard');
   }
 }
@@ -95,7 +95,8 @@ function mapStateToProps(state, ownProps) {
     peripheral,
     providerType: state.provider.currentProviderType,
     meetingId: meetingId,
-    profile
+    profile,
+    userId: state.provider.currentUserId
   };
 }
 

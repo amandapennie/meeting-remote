@@ -47,6 +47,7 @@ function startMeetingApiCall(access, meetingId) {
 		})
 		.then((response) => {
 			response.json().then((respJson) => {
+				console.log(respJson);
 				return resolve({hostUrl: respJson.hostURL});
 			});
 		})

@@ -113,8 +113,9 @@ export function associatePeripheral(peripheral) {
 }
 
 export function connectTimeout() {
-  return async function(dispatch) {
+  return async function(dispatch, getState) {
       dispatch(peripheralConnectTimeout());
+      const userId = getState().provider.currentUserId;
       Alert.alert(
         'Launch Error',
         'We cannot connect to this device, it may be out of range.',
@@ -126,14 +127,16 @@ export function connectTimeout() {
         ],
         { cancelable: false }
       );
-      track('LAUNCH_TIMEOUT');
+      track('LAUNCH_TIMEOUT', userId);
   }
 }
 
 // Attempt to connect to bluetooth peripheral
 export function attemptConnect(peripheral, noPrompt) {
   return async function (dispatch, getState) {
-    const state = getState().bluetooth;
+    const globalState = getState();
+    const userId = globalState.provider.currentUserId;
+    const state = globalState.bluetooth;
 
     if (!noPrompt && state.bluetoothHardwareState !== constants.states.POWERED_ON) {
       // Can't connect without bluetooth turned on
@@ -166,6 +169,8 @@ export function attemptConnect(peripheral, noPrompt) {
           }else{
             dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
           }
+          launchData.launchCode = null;
+          track('MEETING_LAUNCH_TRIGGERED', userId, launchData);
         }else{
           // no launch data, why are we connecting???
         }
