@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AppState,
   ActivityIndicator,
   Button,
   TextStyle,
@@ -10,7 +11,7 @@ import {
   View,
   ViewStyle,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
@@ -35,6 +36,7 @@ class ProviderDashboardView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      appState: 'inactive',
       launchType: null,
       selectedMeetingId: 'profileId',
       selectedPeripheral: null,
@@ -57,6 +59,8 @@ class ProviderDashboardView extends React.Component {
     if(this.props.bluetoothState.bluetoothHardwareState === "poweredOn"){
       this.beginScan();
     }
+
+    AppState.addEventListener('change', this._handleAppStateChange);
     
   }
 
@@ -109,6 +113,17 @@ class ProviderDashboardView extends React.Component {
 
   componentWillUnmount() {
     this.props.stopScan();
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this.beginScan();
+    }else{
+      this.stopScan();
+    }
+
+    this.setState({appState: nextAppState});
   }
 
   beginScan() {
