@@ -17,13 +17,17 @@ export default handleActions(
       const currentUserId = action.payload.userId;
       providersByType[action.payload.providerType] = action.payload.providerAuth;
       const newData = Object.assign({}, state.authenticatedProviders, providersByType);
-      return Object.assign({}, state, {authenticatedProviders: newData, currentUserId});
+      return Object.assign({}, state, {authenticatedProviders: newData, currentUserId, launchType: 'start'});
     },
 
     [actions.constants.PROVIDER_AUTH_CLEARED]: (state, action) => {
       delete state.authenticatedProviders[action.payload.providerType];
       const newData = Object.assign({}, state.authenticatedProviders);
       return Object.assign({}, state, {authenticatedProviders: newData, currentUserId: null});
+    },
+
+    [actions.constants.PROVIDER_SET_LAUNCH_TYPE]: (state, action) => {
+      return Object.assign({}, state, {launchType: action.payload});
     },
 
     [actions.constants.PROVIDER_LAUNCH_REQUESTED]: (state, action) => {
@@ -57,6 +61,10 @@ export default handleActions(
 
     [actions.constants.PROVIDER_VALIDATE_MEETING]: (state, action) => {
       return Object.assign({}, state, {validJoinCode: action.payload.code, joinMeetingId: action.payload.meetingId});
+    },
+
+    [actions.constants.PROVIDER_CLEAR_VALIDATE_MEETING]: (state, action) => {
+      return Object.assign({}, state, {validJoinCode: undefined, joinMeetingId: null});
     },
 
     [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED]: (state, action) => {

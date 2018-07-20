@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
@@ -44,7 +45,6 @@ class ProviderDashboardView extends React.Component {
     };
 
     if(!!this.props.authenticatedProviders[this.props.providerType]) {
-      this.state.launchType = "start";
       this.props.loadUpcomingMeetings(this.props.providerType);
     }
   }
@@ -55,7 +55,9 @@ class ProviderDashboardView extends React.Component {
       this.props.providerLaunchRequestEnded();
     }
 
-    console.log(this.props.bluetoothState.bluetoothHardwareState);
+    //clear join code validation
+    this.props.clearValidateMeeting();
+
     if(this.props.bluetoothState.bluetoothHardwareState === "poweredOn"){
       this.beginScan();
     }
@@ -95,7 +97,7 @@ class ProviderDashboardView extends React.Component {
       this.beginScan()
     }
 
-    if(this.state.launchType == 'join' && 
+    if(this.props.launchType == 'join' && 
       !!this.state.selectedPeripheral) {
         if(typeof nextProps.validJoinCode !== 'undefined') {
           this.setState((state) => {
@@ -136,7 +138,7 @@ class ProviderDashboardView extends React.Component {
 
   launchMeeting = () => {
     var meetingId;
-    if(this.state.launchType == "start") {
+    if(this.props.launchType == "start") {
       if(this.state.selectedMeetingId == "profileId") {
         //start user
         meetingId = this.props.profile.meetingId;
@@ -170,13 +172,13 @@ class ProviderDashboardView extends React.Component {
   onPeripheralSelected = (peripheral) => {
     this.setState((state) => {
       var validLaunchInfo = false;
-      if(this.state.launchType === 'start') {
-        validLaunchInfo = !!state.selectedMeetingId;
+      if(this.props.launchType === 'start') {
+        validLaunchInfo = !!state.selectedMeetingId && peripheral != null;
       }
 
-      if(this.state.launchType === 'join') {
+      if(this.props.launchType === 'join') {
         console.log(typeof this.props.validJoinCode);
-        validLaunchInfo = typeof this.props.validJoinCode !== 'undefined';
+        validLaunchInfo = typeof this.props.validJoinCode !== 'undefined' && peripheral != null;
       }
 
       state.selectedPeripheral = peripheral;
@@ -199,6 +201,8 @@ class ProviderDashboardView extends React.Component {
       return;
     }
 
+    this.props.setLaunchType(type);
+
     var validLaunchInfo = false;
 
     if(type === 'start') {
@@ -210,7 +214,6 @@ class ProviderDashboardView extends React.Component {
     }
 
     this.setState((state) => {
-      state.launchType = type;
       state.hasValidLaunchInfo = validLaunchInfo;
       return state;
     });
@@ -249,8 +252,8 @@ class ProviderDashboardView extends React.Component {
       activeTextColor: Config.colors.darkGrey
     }
 
-    const joinBtnStyle = (this.state.launchType == 'join') ? {} : clickableBtnStyle;
-    const startBtnStyle = (this.state.launchType == 'start') ? {} : clickableBtnStyle;
+    const joinBtnStyle = (this.props.launchType == 'join') ? {} : clickableBtnStyle;
+    const startBtnStyle = (this.props.launchType == 'start') ? {} : clickableBtnStyle;
 
     return (
        <View style={styles.container}>
@@ -264,19 +267,21 @@ class ProviderDashboardView extends React.Component {
               <View style={{flex: 1, marginRight: 7}}>
                 <ProviderButton 
                   onPress={() => this.launchTypeSelected('start')} 
+                  checked={this.props.launchType == 'start'}
                   style={{padding: 0}} {...startBtnStyle}>{`START A\nMEETING`}</ProviderButton>
                 </View>
                 <View style={{flex: 1, marginLeft: 7}}>
                   <ProviderButton 
                     onPress={() => this.launchTypeSelected('join')}  
+                    checked={this.props.launchType == 'join'}
                     style={{padding: 0}} {...joinBtnStyle}>{`JOIN A\nMEETING`}</ProviderButton>
                 </View>
             </View>
           </View>
           <View style={{paddingTop: 0, flex: 1}}>
             <View style={{flex: 1, marginLeft: 20, marginRight: 20}}>
-              {this.state.launchType == 'join' && this.renderJoinChoices()}
-              {this.state.launchType == 'start' && this.renderStartChoices()}
+              {this.props.launchType == 'join' && this.renderJoinChoices()}
+              {this.props.launchType == 'start' && this.renderStartChoices()}
             </View>
             <ConferenceSystemChoicesView 
               bluetoothState={this.props.bluetoothState}
@@ -314,6 +319,7 @@ function mapStateToProps(state, ownProps) {
     authenticatedProviders: state.provider.authenticatedProviders,
     bluetoothState,
     profile,
+    launchType: state.provider.launchType,
     validJoinCode: state.provider.validJoinCode,
     joinMeetingId: state.provider.joinMeetingId,
     upcomingMeetings,
@@ -325,6 +331,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     requestAuthSignin: () => dispatch(providerActions.requestAuthSignin()),
+    setLaunchType: (lt) => dispatch(providerActions.providerSetLaunchType(lt)),
     confirmLogout: () => dispatch(providerActions.confirmLogout()),
     startMeeting: (options) => dispatch(providerActions.startAdHocMeeting(options)),
     startMeetingWithId: (options, id) => dispatch(providerActions.startMeetingWithId(options, id)),
@@ -333,6 +340,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     providerLaunchRequestEnded: () => dispatch(providerActions.providerLaunchRequestEnded()),
     providerSelected: (p) => dispatch(providerActions.providerSelected(p)),
     providerValidateMeeting: () => dispatch(providerActions.providerValidateMeeting()),
+    clearValidateMeeting: () => dispatch(providerActions.clearValidateMeeting()),
     checkProfileId: (code) => dispatch(providerActions.checkProfileId(code)),
     checkMeetingId: (code) => dispatch(providerActions.checkMeetingId(code)),
     scanForNewPeripherals: () => dispatch(bluetoothActions.scanForNewPeripherals()),

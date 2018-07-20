@@ -35,7 +35,7 @@ class ConferenceSystemListItem extends React.PureComponent {
   }
 
   _onPress = () => {
-    this.props.onPressItem(this.props.item);
+    this.props.onPressItem((this.props.selected) ? null : this.props.item);
   };
 
   render() {
@@ -45,6 +45,7 @@ class ConferenceSystemListItem extends React.PureComponent {
     return (
       <Animated.View style={{opacity: this.state.fadeAnim, width: '48%', margin:5}}>
         <TouchableOpacity onPress={this._onPress} style={{padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
+            {this.props.selected && <Icon name="check-circle" style={{position: 'absolute', top: 3, right: 5, fontSize: 20, color: textColor}} />}
             <Text style={{ color: textColor }}>
               {this.props.item.advertisement.localName}
             </Text>

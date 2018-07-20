@@ -26,6 +26,7 @@ export function getInitialState() {
     provider: {
       currentProviderType: 'gtm',
       authenticatedProviders: {},
+      launchType: 'join',
       launchRequested: false,
       currentUserId: null
     },

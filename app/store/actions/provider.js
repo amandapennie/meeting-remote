@@ -19,6 +19,7 @@ const INCLUDE_DUPES = false;
 
 export const constants = {
   PROVIDER_SELECTED: 'provider/PROVIDER_SELECTED',
+  PROVIDER_SET_LAUNCH_TYPE: 'provider/PROVIDER_SET_LAUNCH_TYPE',
   PROVIDER_AUTH_RECEIVED: 'provider/PROVIDER_AUTH_RECEIVED', 
   PROVIDER_AUTH_CLEARED: 'provider/PROVIDER_CLEARED', 
   PROVIDER_LAUNCH_REQUESTED: 'provider/PROVIDER_LAUNCH_REQUESTED', 
@@ -32,11 +33,13 @@ export const constants = {
   PROVIDER_SESSION_KILL_ERROR: 'provider/PROVIDER_SESSION_KILL_ERROR',
   PROVIDER_MEETING_LINK_SHARED: 'provider/PROVIDER_MEETING_LINK_SHARED',
   PROVIDER_VALIDATE_MEETING: 'provider/PROVIDER_VALIDATE_MEETING',
+  PROVIDER_CLEAR_VALIDATE_MEETING: 'provider/PROVIDER_CLEAR_VALIDATE_MEETING',
   PROVIDER_VALIDATE_MEETING_ERROR: 'provider/PROVIDER_VALIDATE_MEETING_ERROR',
   ERROR: 'autoreduce provider/ERROR',
 };
 
 export const providerSelected = createAction(constants.PROVIDER_SELECTED);
+export const providerSetLaunchType = createAction(constants.PROVIDER_SET_LAUNCH_TYPE);
 export const providerAuthReceived = createAction(constants.PROVIDER_AUTH_RECEIVED);
 export const providerAuthCleared = createAction(constants.PROVIDER_AUTH_CLEARED);
 export const providerLaunchRequested = createAction(constants.PROVIDER_LAUNCH_REQUESTED);
@@ -50,6 +53,7 @@ export const providerSessionKilled = createAction(constants.PROVIDER_SESSION_KIL
 export const providerSessionKillError = createAction(constants.PROVIDER_SESSION_KILL_ERROR);
 export const meetingLinkShared = createAction(constants.PROVIDER_MEETING_LINK_SHARED);
 export const validateMeeting = createAction(constants.PROVIDER_VALIDATE_MEETING);
+export const clearValidateMeeting = createAction(constants.PROVIDER_CLEAR_VALIDATE_MEETING);
 export const validateMeetingError = createAction(constants.PROVIDER_VALIDATE_MEETING_ERROR);
 
 export const setError = createAction(constants.ERROR, undefined, (payload, meta) => meta)
