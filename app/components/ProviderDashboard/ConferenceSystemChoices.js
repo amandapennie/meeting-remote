@@ -96,7 +96,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
                 <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 12, textAlign: 'center'}}>select conference room to begin</Text>
               </View>
           <View style={{flex: 1, flexWrap: 'wrap'}}>
-              { choices && choices.map((item, i) => {
+              { this.props.active && choices && choices.map((item, i) => {
                     if(item.id){
                       return (
                           <ConferenceSystemListItem 

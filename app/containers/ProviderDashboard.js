@@ -37,7 +37,7 @@ class ProviderDashboardView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      appState: 'inactive',
+      appState: 'active',
       launchType: null,
       selectedMeetingId: 'profileId',
       selectedPeripheral: null,
@@ -284,6 +284,7 @@ class ProviderDashboardView extends React.Component {
               {this.props.launchType == 'start' && this.renderStartChoices()}
             </View>
             <ConferenceSystemChoicesView 
+              active={this.state.appState === 'active'}
               bluetoothState={this.props.bluetoothState}
               onSelected={this.onPeripheralSelected}
               selected={this.state.selectedPeripheral} />
