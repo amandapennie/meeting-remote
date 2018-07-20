@@ -44,7 +44,6 @@ class MeetingReviewView extends React.Component {
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
             {profile && <Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text> }
-            <HorizontalRule />
           </View>
           <View style={{flex:1, padding: 30, paddingLeft: 25, paddingRight: 25}}>
             <Text style={{color: "#ffffff", textAlign: 'center', fontSize: 24, marginBottom: 35}}>How well did this app help you start your meeting?</Text>

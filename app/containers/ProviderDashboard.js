@@ -254,13 +254,20 @@ class ProviderDashboardView extends React.Component {
 
     const joinBtnStyle = (this.props.launchType == 'join') ? {} : clickableBtnStyle;
     const startBtnStyle = (this.props.launchType == 'start') ? {} : clickableBtnStyle;
+    var launchBtnText; 
+    if(this.state.hasValidLaunchInfo) {
+      launchBtnText = "Launch Meeting";
+    }else if(this.props.launchType == "join" && typeof this.props.validJoinCode === 'undefined') {
+      launchBtnText = "Enter Meeting Id";
+    }else{
+      launchBtnText = "Select Room To Start";
+    }
 
     return (
        <View style={styles.container}>
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
             {profile && <TouchableOpacity onPress={this.props.confirmLogout}><Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text></TouchableOpacity> }
-            <HorizontalRule />
           </View>
           <View style={{marginLeft: 20, marginRight: 20, paddingTop: 20}}>
             <View style={{flexDirection: 'row'}}>
@@ -296,7 +303,7 @@ class ProviderDashboardView extends React.Component {
               onPress={this.launchMeeting} 
               textAlign='center' 
               fontSize={20} 
-              style={{paddingTop: 10, paddingBottom: 10}}>Launch Meeting</ProviderButton>
+              style={{paddingTop: 10, paddingBottom: 10}}>{launchBtnText}</ProviderButton>
           </View>
         </View>
     );

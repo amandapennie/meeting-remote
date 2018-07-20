@@ -32,7 +32,7 @@ class MeetingListItem extends React.PureComponent {
         <TouchableOpacity onPress={this._onPress}>
           <View style={{paddingTop: 12}}>
             <Text style={{ color: textColor, fontWeight }}>
-               Personal Code: {this.props.title}
+               New Meeting: {this.props.title}
             </Text>
             <HorizontalRule marginTop={12} />
           </View>
@@ -107,7 +107,7 @@ export default class MeetingChoicesView extends React.Component {
 
     return (
       <View style={{flex: 1, paddingTop: 25, paddingBottom: 10}}>
-        <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 15, textAlign: 'center'}}>Select your meeting:</Text>
+        <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 15, textAlign: 'center'}}>Available Meetings</Text>
         <View
           style={{
             marginTop: 7,

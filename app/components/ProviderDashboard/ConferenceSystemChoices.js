@@ -43,7 +43,7 @@ class ConferenceSystemListItem extends React.PureComponent {
     const bgColor = this.props.selected ? "#ffffff" : Config.colors.lightGrey;
 
     return (
-      <Animated.View style={{opacity: this.state.fadeAnim, width: '48%', margin:5}}>
+      <Animated.View style={{opacity: this.state.fadeAnim, width: '47%', margin:5}}>
         <TouchableOpacity onPress={this._onPress} style={{padding: 10, backgroundColor: bgColor, borderRadius: 5}}>
             {this.props.selected && <Icon name="check-circle" style={{position: 'absolute', top: 3, right: 5, fontSize: 20, color: textColor}} />}
             <Text style={{ color: textColor }}>
@@ -64,7 +64,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
     if(bluetoothState.bluetoothHardwareState !== "poweredOn") {
       return (
         <View style={{flex: 0.5, paddingTop: 10, backgroundColor: Config.colors.mediumGrey}}>
-          <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Conference Rooms Near Me:</Text>
+          <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Rooms Near Me:</Text>
           <View style={{flex: 1, paddingTop: 30}}>
               <Text style={styles.bleStatusMessage}>Turn on bluetooth</Text>
               <Text style={styles.bleStatusMessage}>to find nearby devices</Text>
@@ -86,7 +86,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
       <View style={{flex: 0.5, paddingTop: 10, paddingLeft: 20, paddingRight: 20, backgroundColor: Config.colors.mediumGrey}}>
           <View style={{flexDirection: 'row'}}>
               <View style={{flex:1}}>
-                <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Conference Rooms Near Me:</Text>
+                <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Rooms Near Me:</Text>
               </View>
               <View style={{paddingRight: 10}}>
                 <ActivityIndicator animating={bluetoothState.scanning} size="small" color="#fff" />
@@ -95,7 +95,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
               <View>
                 <Text style={{color: Config.colors.lightGrey, marginLeft: 10, fontSize: 12, textAlign: 'center'}}>select conference room to begin</Text>
               </View>
-          <View style={{flex: 1, flexWrap: 'wrap'}}>
+          <View style={{flex: 1, flexWrap: 'wrap', paddingTop: 5}}>
               { this.props.active && choices && choices.map((item, i) => {
                     if(item.id){
                       return (
@@ -107,7 +107,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
                       );
                     }else{
                       return (
-                            <View key={i} onPress={this._onPress} style={{width: '48%',  margin:5, padding: 10, backgroundColor: Config.colors.darkGrey, borderRadius: 5}}><Text>{` `}</Text></View>
+                            <View key={i} onPress={this._onPress} style={{width: '47%',  margin:5, padding: 10, backgroundColor: Config.colors.darkGrey, borderRadius: 5}}><Text>{` `}</Text></View>
                       );
                     }
                 }

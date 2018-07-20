@@ -68,7 +68,6 @@ class SessionView extends React.Component {
           <View style={{marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/Logo.png')} style={{width: '75%', height: 37}} />
             {profile && <TouchableOpacity><Text style={{color: Config.colors.lightGrey, fontSize: 9}}>Signed in as {profile.firstName} {profile.lastName}</Text></TouchableOpacity> }
-            <HorizontalRule />
           </View>
           <View style={{padding: 30, paddingLeft: 25, paddingRight: 25}}>
             <ProviderButton

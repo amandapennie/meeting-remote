@@ -311,13 +311,19 @@ export function loadUpcomingMeetings(providerType) {
 
 export function shareLink(meetingId) {
   return async function (dispatch, getState) {
+      const userId = getState().provider.currentUserId;
+      track('MEETING_SHARE_TRIGGERED', userId, {meetingId});
       Share.share({
           message: 'Join my meeting!',
           url: `https://global.gotomeeting.com/join/${meetingId}`,
           title: 'Share meeting link'
+      }).then((result) => {
+        if(result.action == "sharedAction") {
+          track('MEETING_LINK_SHARED', userId, {meetingId, ...result});
+        }else{
+          track('MEETING_SHARE_DISMISSED', userId, {meetingId});
+        }
       });
       dispatch(meetingLinkShared({meetingId}));
-      const userId = getState().provider.currentUserId;
-      track('MEETING_SHARE_TRIGGERED', userId, {meetingId});
   }
 }
