@@ -143,7 +143,7 @@ export function handleAuthResponse(providerType, access) {
   	  	email: access.email
   	  };
 
-      const userId = access.account_key;
+      const userId = access.organizer_key;
       identify(userId, oauthProfile);
       track('USER_LOGIN', userId, oauthProfile);
 
@@ -152,7 +152,7 @@ export function handleAuthResponse(providerType, access) {
       gtm.getProfileInformation(access)
       .then((gtmProfile) => {
         const providerAuth = {access, profile: Object.assign(oauthProfile, gtmProfile)};
-        dispatch(providerAuthReceived({providerType, providerAuth, userId: access.account_key}));
+        dispatch(providerAuthReceived({providerType, providerAuth, userId: access.organizer_key}));
       });
   }
 }
