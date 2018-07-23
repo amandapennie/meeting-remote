@@ -121,6 +121,9 @@ class ProviderDashboardView extends React.Component {
   _handleAppStateChange = (nextAppState) => {
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
       this.beginScan();
+      if(!!this.props.authenticatedProviders[this.props.providerType]) {
+        this.props.loadUpcomingMeetings(this.props.providerType);
+      }
     }else{
       this.stopScan();
     }
