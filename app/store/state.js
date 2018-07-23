@@ -28,7 +28,8 @@ export function getInitialState() {
       authenticatedProviders: {},
       launchType: 'join',
       launchRequested: false,
-      currentUserId: null
+      currentUserId: null,
+      upcomingMeetingsLoading: false
     },
 
     session: {

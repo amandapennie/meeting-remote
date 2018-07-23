@@ -72,6 +72,8 @@ class MeetingSelectList extends React.PureComponent {
   render() {
     return (
       <FlatList
+        refreshing={this.props.refreshing}
+        onRefresh={this.props.onRefresh}
         data={this.props.data}
         extraData={this.props}
         keyExtractor={this._keyExtractor}
@@ -115,6 +117,8 @@ export default class MeetingChoicesView extends React.Component {
             borderBottomColor: Config.colors.lightGrey,
             borderBottomWidth: 1 }} />
         <MeetingSelectList data={meetingChoices}
+                refreshing={this.props.refreshing}
+                onRefresh={this.props.onRefresh}
                 selected={this.props.selected}
                 onSelected={this.props.onSelected} />
       </View> 

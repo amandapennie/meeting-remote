@@ -234,11 +234,19 @@ class ProviderDashboardView extends React.Component {
   renderStartChoices = () => {
     return (
       <MeetingChoicesView
+        onRefresh={this._refreshMeetingChoices}
+        refreshing={this.props.upcomingMeetingsLoading}
         profileId={this.props.profile.profileId}
         meetings={this.props.upcomingMeetings}
         onSelected={this.onMeetingIdSelected}
         selected={this.state.selectedMeetingId} />
     );
+  }
+
+  _refreshMeetingChoices = () => {
+      if(!!this.props.authenticatedProviders[this.props.providerType]) {
+        this.props.loadUpcomingMeetings(this.props.providerType);
+      }
   }
 
   render() {
@@ -334,6 +342,7 @@ function mapStateToProps(state, ownProps) {
     validJoinCode: state.provider.validJoinCode,
     joinMeetingId: state.provider.joinMeetingId,
     upcomingMeetings,
+    upcomingMeetingsLoading: state.provider.upcomingMeetingsLoading,
     scene: state.routes.scene
   };
 }

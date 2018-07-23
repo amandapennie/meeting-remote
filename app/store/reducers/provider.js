@@ -67,13 +67,22 @@ export default handleActions(
       return Object.assign({}, state, {validJoinCode: undefined, joinMeetingId: null});
     },
 
+    [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_START]: (state, action) => {
+      console.log('start reload');
+      return Object.assign({}, state, {upcomingMeetingsLoading: true});
+    },
+
     [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ENDED]: (state, action) => {
       const providersByType = {};
       const providerAuth = state.authenticatedProviders[action.payload.providerType]
       providerAuth.upcomingMeetings = action.payload.upcomingMeetings
       providersByType[action.payload.providerType] = providerAuth;
       const newData = Object.assign({}, state.authenticatedProviders, providersByType);
-      return Object.assign({}, state, {authenticatedProviders: newData});
+      return Object.assign({}, state, {authenticatedProviders: newData, upcomingMeetingsLoading: false});
+    },
+
+    [actions.constants.PROVIDER_LOAD_UPCOMING_MTGS_ERROR]: (state, action) => {
+      return Object.assign({}, state, {upcomingMeetingsLoading: false});
     }
 
   },
