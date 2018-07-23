@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import { track } from '../../tracking';
+import { Sentry } from 'react-native-sentry';
 
 export const constants = {
   INIT_START: 'init/START',
@@ -21,6 +22,15 @@ export function start() {
     }
 
     dispatch(initStart());
+
+    // set user context
+    try {
+      const provider = state.provider;
+      const profile = state.provider.authenticatedProviders[provider.currentProviderType].profile;
+      Sentry.setUserContext({ email: profile.email });
+    }catch(ex) {
+      //fail silently
+    }
 
     RouterActions.providerDashboard({type: 'replace'});
 

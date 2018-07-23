@@ -146,6 +146,7 @@ export function handleAuthResponse(providerType, access) {
       const userId = access.organizer_key;
       identify(userId, oauthProfile);
       track('USER_LOGIN', userId, oauthProfile);
+      Sentry.setUserContext({ email: oauthProfile.email });
 
       access.expiresAt = getExpirationForAccess(access);
 

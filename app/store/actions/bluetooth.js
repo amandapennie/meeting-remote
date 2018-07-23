@@ -7,6 +7,11 @@ import { track } from '../../tracking';
 import { BLE_CONF_SYSTEM_SERVICE_ID, BLE_CONF_SYSTEM_CHARACTERISTIC_ID } from 'react-native-dotenv';
 import { Buffer } from 'buffer'
 import url from 'url';
+import {
+  Sentry,
+  SentrySeverity,
+  SentryLog
+} from 'react-native-sentry';
 
 const INCLUDE_DUPES = false;
 
@@ -128,6 +133,7 @@ export function connectTimeout() {
         { cancelable: false }
       );
       track('LAUNCH_TIMEOUT', userId);
+      Sentry.captureMessage("launch timeout");
   }
 }
 
@@ -173,6 +179,7 @@ export function attemptConnect(peripheral, noPrompt) {
           track('MEETING_LAUNCH_TRIGGERED', userId, launchData);
         }else{
           // no launch data, why are we connecting???
+          Sentry.captureMessage("connecting without launch data");
         }
 
       });
@@ -184,7 +191,7 @@ export function attemptConnect(peripheral, noPrompt) {
 
       instance.connect(function(err){
         if(err) {
-          console.log(err);
+          Sentry.captureMessage(`connect error: ${err}`);
           if(state.scanning){ dispatch(stopScan()); }
           dispatch(setError(err));
         }
@@ -199,6 +206,7 @@ export function attemptConnect(peripheral, noPrompt) {
     function findInstanceAndConnect(){
       const peripheralInstance = noble._peripherals[peripheral.id];
       if(!peripheralInstance) {
+        Sentry.captureMessage("peripheral no longer in noble._peripherals");
         _scanForPeripheralId(peripheral.id, (err, foundPeripheral) => {
           if(!err && foundPeripheral) {
             connect(foundPeripheral);
