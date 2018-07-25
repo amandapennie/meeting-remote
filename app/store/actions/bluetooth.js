@@ -144,6 +144,10 @@ export function attemptConnect(peripheral, noPrompt) {
     const userId = globalState.provider.currentUserId;
     const state = globalState.bluetooth;
 
+    console.log("on launch")
+    console.log(globalState.provider);
+    console.log(userId);
+
     if (!noPrompt && state.bluetoothHardwareState !== constants.states.POWERED_ON) {
       // Can't connect without bluetooth turned on
       Alert.alert(
@@ -171,9 +175,13 @@ export function attemptConnect(peripheral, noPrompt) {
           if(launchData.launchType == "start"){
             var queryData = url.parse(launchData.launchCode, true).query;
             const token = queryData.authenticationToken;
-            dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
+            setTimeout(() => {
+              dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
+            }, 5000);
           }else{
-            dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
+            setTimeout(() => {
+              dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
+            }, 5000);
           }
           launchData.launchCode = null;
           track('MEETING_LAUNCH_TRIGGERED', userId, launchData);
@@ -305,12 +313,21 @@ export function sendMessage(peripheral, message) {
   return async function (dispatch, getState) {
       const peripheralInstance = noble._peripherals[peripheral.id];
       const serviceUuid = peripheral.advertisement.serviceUuids[0];
+      Sentry.setExtraContext({
+        "room_name": peripheral.advertisement.localName
+      });
       peripheralInstance.discoverSomeServicesAndCharacteristics([serviceUuid], [BLE_CONF_SYSTEM_CHARACTERISTIC_ID], (error, services, characteristics) => {
         if(error) {
           console.log(error);
         }
         const characteristic = characteristics[0];
-        characteristic.write(Buffer.from(message, 'utf8'), false, (error) => {if(error){console.log(error)} } );
+        characteristic.write(Buffer.from(message, 'utf8'), false, (error) => {
+          if(error){
+            Sentry.captureMessage(`send message error: ${error}`);
+          }else{
+            Sentry.captureMessage(`message sent to room`);
+          } 
+        });
       });
   };
 }

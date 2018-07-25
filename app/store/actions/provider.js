@@ -129,7 +129,7 @@ function checkAndUpdateProviderAuth(providerType) {
       if(checkResp.refreshed) {
         providerAuth.access = checkResp.access;
         providerAuth.access.expiresAt = getExpirationForAccess(checkResp.access);
-        dispatch(providerAuthReceived({providerType, providerAuth}));
+        dispatch(providerAuthReceived({providerType, providerAuth, userId: access.organizer_key}));
       }
       return providerAuth;
     }
@@ -144,6 +144,8 @@ export function handleAuthResponse(providerType, access) {
   	  };
 
       const userId = access.organizer_key;
+      console.log("handleAuth userId");
+      console.log(userId);
       identify(userId, oauthProfile);
       track('USER_LOGIN', userId, oauthProfile);
       Sentry.setUserContext({ email: oauthProfile.email });
