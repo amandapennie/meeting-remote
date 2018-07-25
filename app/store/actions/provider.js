@@ -199,7 +199,7 @@ export function startMeetingWithId(options, meetingId) {
         if(resp.int_err_code) {
           throw new Error(resp.int_err_code);
         }
-        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: meetingId}));
+        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: meetingId, roomName: peripheral.advertisement.localName}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       });
   }
@@ -213,7 +213,7 @@ export function startAdHocMeeting(options) {
       //only supports gtm for now
       gtm.getAdHocGtmLauchUrl(providerAuth.access)
       .then((resp) => {
-        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: resp.meetingId}));
+        dispatch(providerLaunchCodeGranted({providerType, launchType: 'start', launchCode: resp.hostUrl, meetingId: resp.meetingId, roomName: peripheral.advertisement.localName}));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       })
       .catch((err) => {
@@ -228,7 +228,7 @@ export function joinMeeting(options, id) {
       const {providerType, peripheral, meetingType, deviceType} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       //only supports gtm for now
-      dispatch(providerLaunchCodeGranted({providerType, launchType: 'join', meetingId: id}));
+      dispatch(providerLaunchCodeGranted({providerType, launchType: 'join', meetingId: id, roomName: peripheral.advertisement.localName}));
       dispatch(bluetoothActions.associatePeripheral(peripheral));
   }
 }
@@ -272,7 +272,7 @@ export function endMeeting(options) {
       const {access} = getState().provider.authenticatedProviders[providerType];
       dispatch(bluetoothActions.attemptDisconnect(peripheral, true));
       const userId = getState().provider.currentUserId;
-      track('MEETING_END_TRIGGERED', userId, {meetingId});
+      track('MEETING_END_TRIGGERED', userId, {meetingId, roomName: peripheral.advertisement.localName});
       //only supports gtm for now
       gtm.killSession(access, meetingId)
       .then((resp) => {
@@ -312,7 +312,9 @@ export function loadUpcomingMeetings(providerType) {
 
 export function shareLink(meetingId) {
   return async function (dispatch, getState) {
-      const userId = getState().provider.currentUserId;
+      const state = getState();
+      const userId = state.provider.currentUserId;
+      const launchData = state.launchData
       track('MEETING_SHARE_TRIGGERED', userId, {meetingId});
       Share.share({
           message: 'Join my meeting!',
@@ -320,7 +322,8 @@ export function shareLink(meetingId) {
           title: 'Share meeting link'
       }).then((result) => {
         if(result.action == "sharedAction") {
-          track('MEETING_LINK_SHARED', userId, {meetingId, ...result});
+          launchData.launchCode = null;
+          track('MEETING_LINK_SHARED', userId, {meetingId, ...result, ...launchData});
         }else{
           track('MEETING_SHARE_DISMISSED', userId, {meetingId});
         }

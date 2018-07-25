@@ -43,7 +43,9 @@ export default handleActions(
     },
 
     [actions.constants.PROVIDER_SESSION_KILL_REQUESTED]: (state, action) => {
-      return Object.assign({}, state, {launchRequested: false, launchData: null});
+      const lastLaunchData = state.launchData;
+      lastLaunchData.launchCode = null;
+      return Object.assign({}, state, {launchRequested: false, launchData: null, lastLaunchData});
     },
 
     // currently kill session data if peripheral disconnects
