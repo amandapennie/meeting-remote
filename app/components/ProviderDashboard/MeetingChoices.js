@@ -20,7 +20,7 @@ import HorizontalRule from '../HorizontalRule';
 
 class MeetingListItem extends React.PureComponent {
   _onPress = () => {
-    this.props.onPressItem(this.props.id);
+    this.props.onPressItem(this.props.item);
   };
 
   render() {
@@ -64,8 +64,9 @@ class MeetingSelectList extends React.PureComponent {
   _renderItem = ({item}) => (
     <MeetingListItem
       id={item.id}
+      item={item}
       onPressItem={this._onPressItem}
-      selected={this.props.selected == item.id}
+      selected={this.props.selected.id == item.id}
       title={item.title} />
   );
 
@@ -85,7 +86,7 @@ class MeetingSelectList extends React.PureComponent {
 export default class MeetingChoicesView extends React.Component {
   render() {
     const meetingChoices = [
-      {id: 'profileId', title: this.props.profileId}
+      {id: 'profileId', title: this.props.profileId, subject: 'personalId', isOrganizer: true}
     ];
 
     if(this.props.meetings && this.props.meetings.isArray) {
@@ -101,11 +102,12 @@ export default class MeetingChoicesView extends React.Component {
         }
         meetingChoices.push({
           id: meeting.meetingId,
-          title: `${meeting.subject} ${start}`
+          title: `${meeting.subject} ${start}`,
+          subject: meeting.subject,
+          isOrganizer: meeting.organizerKey == this.props.currentUserId
         })
       });
     }
-
 
     return (
       <View style={{flex: 1, paddingTop: 25, paddingBottom: 10}}>

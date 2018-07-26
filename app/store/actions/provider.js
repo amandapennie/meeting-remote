@@ -189,7 +189,7 @@ export function confirmLogout() {
 
 export function startMeetingWithId(options, meetingId) {
   return async function (dispatch, getState) {
-      const {providerType, peripheral, meetingType, deviceType} = options;
+      const {providerType, peripheral, meetingType, deviceType, subject} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
       //only supports gtm for now
@@ -205,7 +205,8 @@ export function startMeetingWithId(options, meetingId) {
           launchType: 'start', 
           launchCode: resp.hostUrl, 
           meetingId: meetingId, 
-          roomName: peripheral.advertisement.localName
+          roomName: peripheral.advertisement.localName,
+          subject
         }));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       });
@@ -214,7 +215,7 @@ export function startMeetingWithId(options, meetingId) {
 
 export function startAdHocMeeting(options) {
   return async function (dispatch, getState) {
-      const {providerType, peripheral, meetingType, deviceType} = options;
+      const {providerType, peripheral, meetingType, deviceType, subject} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       const providerAuth = await dispatch(checkAndUpdateProviderAuth(providerType));
       //only supports gtm for now
@@ -226,7 +227,8 @@ export function startAdHocMeeting(options) {
           launchType: 'start', 
           launchCode: resp.hostUrl, 
           meetingId: resp.meetingId, 
-          roomName: peripheral.advertisement.localName
+          roomName: peripheral.advertisement.localName,
+          subject
         }));
         dispatch(bluetoothActions.associatePeripheral(peripheral));
       })
@@ -239,7 +241,7 @@ export function startAdHocMeeting(options) {
 export function joinMeeting(options, id) {
   return async function (dispatch, getState) {
     console.log("inside join");
-      const {providerType, peripheral, meetingType, deviceType} = options;
+      const {providerType, peripheral, meetingType, deviceType, subject} = options;
       dispatch(providerLaunchRequested({providerType, deviceId: peripheral.id, meetingType, deviceType}));
       //only supports gtm for now
       dispatch(providerLaunchCodeGranted({
@@ -247,7 +249,8 @@ export function joinMeeting(options, id) {
         launchId: uuidv4(),
         launchType: 'join', 
         meetingId: id, 
-        roomName: peripheral.advertisement.localName
+        roomName: peripheral.advertisement.localName,
+        subject
       }));
       dispatch(bluetoothActions.associatePeripheral(peripheral));
   }
@@ -323,6 +326,7 @@ export function loadUpcomingMeetings(providerType) {
       dispatch(providerLoadUpcomingMtgsEnded({providerType, upcomingMeetings}));
     })
     .catch((err) => {
+      console.log(err);
       if(err === 403) {
         RouterActions.login({type: 'replace'});
         return;
