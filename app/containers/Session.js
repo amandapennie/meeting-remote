@@ -41,7 +41,7 @@ class SessionView extends React.Component {
     // }
   }
 
-// toggle when container is opened
+  // toggle when container is opened
   toggleStopwatch() {
     this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset:false});
   }

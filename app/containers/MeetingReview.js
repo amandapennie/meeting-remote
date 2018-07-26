@@ -73,13 +73,13 @@ class MeetingReviewView extends React.Component {
   _onPressRate = () => {
     track('MEETING_END_RATED', this.props.userId, {
       rating: this.state.starCount,
-      ...this.props.lastLaunchData
+      launchId: this.props.lastLaunchId
     });
     RouterActions.reset('providerDashboard');
   }
 
   _onPressSkip = () => {
-    track('MEETING_END_RATING_SKIPPED', this.props.userId, this.props.lastLaunchData);
+    track('MEETING_END_RATING_SKIPPED', this.props.userId, {launchId: this.props.lastLaunchId});
     RouterActions.reset('providerDashboard');
   }
 }
@@ -91,7 +91,7 @@ function mapStateToProps(state, ownProps) {
   const currentProviderType = state.provider.currentProviderType;
   const profile = state.provider.authenticatedProviders[currentProviderType].profile;
   return {
-    lastLaunchData: state.provider.lastLaunchData || {},
+    lastLaunchId: state.provider.lastLaunchId,
     bluetoothState,
     peripheral,
     providerType: state.provider.currentProviderType,

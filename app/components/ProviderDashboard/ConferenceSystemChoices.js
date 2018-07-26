@@ -61,7 +61,7 @@ export default class ConferenceSystemChoicesView extends React.Component {
     const { bluetoothState } = this.props;
 
     // if not poweredOn need to tell them to turn on bluetooth
-    if(bluetoothState.bluetoothHardwareState !== "poweredOn") {
+    if(bluetoothState.bluetoothHardwareState !== "on") {
       return (
         <View style={{flex: 0.5, paddingTop: 10, backgroundColor: Config.colors.mediumGrey}}>
           <Text style={{color: "#ffffff", marginLeft: 10, fontSize: 18, textAlign: 'center'}}>Rooms Near Me:</Text>

@@ -3,6 +3,7 @@ package com.meetingremote;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import it.innove.BleManagerPackage;
 import io.sentry.RNSentryPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new BleManagerPackage(),
             new RNSentryPackage(),
             new LinearGradientPackage(),
             new RNDeviceInfo(),

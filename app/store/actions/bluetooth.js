@@ -2,10 +2,10 @@ import { Dispatch } from 'redux';
 import { Alert } from 'react-native';
 import { createAction, Action } from 'redux-actions';
 import { Actions as RouterActions } from 'react-native-router-flux';
-import noble from 'react-native-ble';
+import BleManager from 'react-native-ble-manager';
 import { track } from '../../tracking';
 import { BLE_CONF_SYSTEM_SERVICE_ID, BLE_CONF_SYSTEM_CHARACTERISTIC_ID } from 'react-native-dotenv';
-import { Buffer } from 'buffer'
+import { UTF8 } from 'convert-string';
 import url from 'url';
 import {
   Sentry,
@@ -14,6 +14,7 @@ import {
 } from 'react-native-sentry';
 
 const INCLUDE_DUPES = false;
+const CONNECTION_TIMEOUT_MILLISECONDS = 10000;
 
 export const constants = {
   BLE_STATE_UPDATE: 'bluetooth/BLE_STATE_UPDATE', 
@@ -32,8 +33,8 @@ export const constants = {
   	RESETTING : "resetting",
   	UNSUPPORTED : "unsupported",
   	UNAUTHORIZED : "unauthorized",
-  	POWERED_OFF : "poweredOff",
-  	POWERED_ON : "poweredOn"
+  	POWERED_OFF : "off",
+  	POWERED_ON : "on"
   }
 };
 
@@ -59,54 +60,57 @@ ErrorUtils.setGlobalHandler((err, isFatal) => {
   }
 });
 
-export function scanForNewPeripherals() {
-  return async function (dispatch, getState) {
-    noble.on('discover', function(peripheralInstance) {
-      // cannot store Peripheral instance in AppState, need to convert to simple object
-      // noble will hold onto the proper Peripheral instance
-      let peripheral = JSON.parse(peripheralInstance.toString());
+export function peripheralFound(peripheralInstance) {
+    return async function (dispatch, getState) {
+      // let peripheral = JSON.parse(peripheralInstance.toString());
+      //console.log(peripheralInstance);
+      let peripheral = {id: peripheralInstance.id, rssi: peripheralInstance.rssi};
 
       var serviceUuid; 
-      if(peripheralInstance.advertisement.serviceUuids){
-        serviceUuid = peripheralInstance.advertisement.serviceUuids[0];
-        if(!serviceUuid.startsWith("c578000f18f7")) {
+      if(peripheralInstance.advertising.serviceUUIDs){
+        serviceUuid = peripheralInstance.advertising.serviceUUIDs[0];
+        if(!serviceUuid.startsWith("C578000F-18F7")) {
           return;
         }
       }else{
         return;
       }
       
-      const hexRoomName = serviceUuid.substr(serviceUuid.length - 20);
-      const roomName = Buffer.from(hexRoomName, 'hex').toString('utf8');
-      peripheralInstance.advertisement.serviceUuids 
+      var roomName = peripheralInstance.advertising.localName;
+
+      if(!roomName) {
+        try{
+          serviceUuid = serviceUuid.replace(/-/g, "");
+          const hexRoomName = serviceUuid.substr(serviceUuid.length - 20);
+          roomName = Buffer.from(hexRoomName, 'hex').toString('utf8');
+        }catch(ex){
+          //pass
+        }
+      }
+
       peripheral.advertisement = {
-        localName: peripheralInstance.advertisement.localName || roomName, 
-        serviceUuids: peripheralInstance.advertisement.serviceUuids
+        localName: roomName, 
+        serviceUuids: peripheralInstance.advertising.serviceUUIDs
       };
 
       dispatch(peripheralDiscovered(peripheral));
-      //dispatch(checkForRssiUpdates(peripheralInstance));
+    }  
+}
 
+export function scanForNewPeripherals() {
+  return async function (dispatch, getState) {
+    BleManager.scan([], 5*60, true).then(() => {
+      dispatch(scanStart())
     });
-
-  	noble.startScanning(
-      [], 
-      true, 
-      (err) => {
-        console.log(err);
-        (!err) ? dispatch(scanStart()) : dispatch(scanStartError(err));
-      });
   };
 }
 
 export function stopScan() {
   return async function (dispatch, getState) {
-    noble.stopScanning((err) => {
+    BleManager.stopScan().then((err) => {
       dispatch(scanEnd());
     });
-    dispatch(scanEnd());
-    noble.removeAllListeners('discover');
-
+    //dispatch(scanEnd());
   };
 }
 
@@ -144,10 +148,6 @@ export function attemptConnect(peripheral, noPrompt) {
     const userId = globalState.provider.currentUserId;
     const state = globalState.bluetooth;
 
-    console.log("on launch")
-    console.log(globalState.provider);
-    console.log(userId);
-
     if (!noPrompt && state.bluetoothHardwareState !== constants.states.POWERED_ON) {
       // Can't connect without bluetooth turned on
       Alert.alert(
@@ -159,208 +159,91 @@ export function attemptConnect(peripheral, noPrompt) {
     }
 
 
-    function connect(instance){
-      instance.once('connect', function(){
+    BleManager.connect(peripheral.id)
+    .then(() => {
+        // Successfull connection
         clearTimeout(_launchConnectTimeout);
         dispatch(peripheralConnected(peripheral));
         if(state.scanning){ dispatch(stopScan()); }
 
-        const { launchData } = getState().provider;
+        //cant write data til we discover services
+        BleManager.retrieveServices(peripheral.id)
+        .then((peripheralInfo) => {
+          // Success code
+          //console.log('Peripheral info:', peripheralInfo);
 
-        if(launchData) {
-          RouterActions.session({type: 'replace'});
-          // gtm specific code
-          console.log('connected now sending launch data');
-          console.log(launchData);
-          if(launchData.launchType == "start"){
-            var queryData = url.parse(launchData.launchCode, true).query;
-            const token = queryData.authenticationToken;
-            setTimeout(() => {
-              dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
-            }, 5000);
+          const { launchData } = getState().provider;
+
+          if(launchData) {
+            RouterActions.session({type: 'replace'});
+            // gtm specific code
+            //console.log('connected now sending launch data');
+            //console.log(launchData);
+            if(launchData.launchType == "start"){
+              var queryData = url.parse(launchData.launchCode, true).query;
+              const token = queryData.authenticationToken;
+                dispatch(sendMessage(peripheral, `start|${launchData.meetingId}|${token}`));
+            }else{
+                dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
+            }
+            launchData.launchCode = null;
+            track('MEETING_LAUNCH_TRIGGERED', userId, launchData);
           }else{
-            setTimeout(() => {
-              dispatch(sendMessage(peripheral, `join|${launchData.meetingId}`));
-            }, 5000);
+            // no launch data, why are we connecting???
+            Sentry.captureMessage("connecting without launch data");
           }
-          launchData.launchCode = null;
-          track('MEETING_LAUNCH_TRIGGERED', userId, launchData);
-        }else{
-          // no launch data, why are we connecting???
-          Sentry.captureMessage("connecting without launch data");
-        }
 
-      });
-
-      instance.once('disconnect', function(){
-        console.log('disconnected ' + peripheral.id);
-        dispatch(peripheralDisconnected(peripheral));
-      });
-
-      instance.connect(function(err){
-        if(err) {
+        });  
+    })
+    .catch((err) => {
+          // Failure code
           Sentry.captureMessage(`connect error: ${err}`);
           if(state.scanning){ dispatch(stopScan()); }
           dispatch(setError(err));
-        }
-      });
+    });
 
-      _launchConnectTimeout = setTimeout(() => {
-        instance.disconnect(); // cancel pending connect
-        dispatch(connectTimeout())
-      }, 10000);
-    }
-
-    function findInstanceAndConnect(){
-      const peripheralInstance = noble._peripherals[peripheral.id];
-      if(!peripheralInstance) {
-        Sentry.captureMessage("peripheral no longer in noble._peripherals");
-        _scanForPeripheralId(peripheral.id, (err, foundPeripheral) => {
-          if(!err && foundPeripheral) {
-            connect(foundPeripheral);
-          } else if(!err) {
-            dispatch(setError('Peripheral Not Found'));
-          } else {
-            dispatch(setError(err));
-          }
-        });
-      }else{
-        connect(peripheralInstance);
-      }
-    }
-
-    if(noPrompt){
-      findInstanceAndConnect();  
-    }else{
-      Alert.alert(
-        'Connect System',
-        'Connect to system via Bluetooth?',
-        [
-          {text: 'Cancel'},
-          {text: 'OK', onPress: () => findInstanceAndConnect() },
-        ]
-      );
-    }
+    _launchConnectTimeout = setTimeout(() => {
+      BleManager.disconnect(peripheral.id).catch((err) => console.log(err)); // cancel pending connect
+      dispatch(connectTimeout())
+    }, CONNECTION_TIMEOUT_MILLISECONDS);
   };
 }
 
 export function attemptDisconnect(peripheral, noPrompt) {
   return async function (dispatch, getState) {
-    function disconnect(){
-      const peripheralInstance = noble._peripherals[peripheral.id];
-      if(peripheralInstance) {
-        dispatch(sendMessage(peripheral, "end"));
-        setTimeout(() => {
-                  peripheralInstance.disconnect((err) => { (err) => (!err) ? dispatch(peripheralDisconnected({id: peripheral.id})) : console.log(err); });
-        }, 2000);
-      }else{
-        dispatch(peripheralDisconnected({id: peripheral.id}));
-      }
-    }
+      dispatch(sendMessage(peripheral, "end"));
+      setTimeout(() => {
+          BleManager.disconnect(peripheral.id)
+          .then(() => {
+              dispatch(peripheralDisconnected({id: peripheral.id}));
+          })
+      }, 2000);
 
-    if(noPrompt){
-      disconnect();
-    }else{
-      Alert.alert(
-        'Disconnect System',
-        'Disconnect system from Bluetooth?',
-        [
-          {text: 'Cancel'},
-          {text: 'OK', onPress: () => disconnect() },
-        ]
-      );
-    }
+
   };
 }
 
-export function checkForRssiUpdates(peripheralInstance) {
-  return async function (dispatch, getState) {
-    console.log("running check");
-    const state = getState();
-    const discoveredPeripherals = state.bluetooth.discoveredPeripherals;
-
-    peripheralInstance.updateRssi((error, updatedRssi) => {
-      if(error) {
-        console.log('rssi update error');
-        console.log(error);
-        return;
-      }
-      if(originalRssi !== updatedRssi) {
-        console.log("updated rssi");
-        peripheral.rssi = updatedRssi;
-        dispatch(peripheralUpdated(peripheral));
-      }else{
-        console.log("same rssi");
-      }
-
-      if(state.bluetooth.scanning);
-      dispatch(checkForRssiUpdates(peripheralInstance));
-    });
-
-  }
-}
-
-function str2ab(str) {
-  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-  var bufView = new Uint16Array(buf);
-  for (var i=0, strLen=str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
+// todo: move
+const channelCharacteristic = '41bb2d1f-4e3b-47eb-8c6c-6d651aa361fd';
 
 export function sendMessage(peripheral, message) {
   return async function (dispatch, getState) {
-      const peripheralInstance = noble._peripherals[peripheral.id];
       const serviceUuid = peripheral.advertisement.serviceUuids[0];
+
       Sentry.setExtraContext({
         "room_name": peripheral.advertisement.localName
       });
-      peripheralInstance.discoverSomeServicesAndCharacteristics([serviceUuid], [BLE_CONF_SYSTEM_CHARACTERISTIC_ID], (error, services, characteristics) => {
-        if(error) {
-          console.log(error);
-        }
-        const characteristic = characteristics[0];
-        characteristic.write(Buffer.from(message, 'utf8'), false, (error) => {
-          if(error){
-            Sentry.captureMessage(`send message error: ${error}`);
-          }else{
-            Sentry.captureMessage(`message sent to room`);
-          } 
-        });
+
+      console.log(message);
+
+      BleManager.write(peripheral.id, serviceUuid, channelCharacteristic, UTF8.stringToBytes(message), 1024)
+      .then(() => {
+        // Success code
+        Sentry.captureMessage(`message sent to room`);
+      })
+      .catch((error) => {
+        // Failure code
+        Sentry.captureMessage(`send message error: ${error}`);
       });
   };
 }
-
-// Scan for a particular peripheral with timeout
-function _scanForPeripheralId(peripheralId, callback, timeout) {
-  let _cleanupTimeout = null;
-  if(!timeout){ timeout = 15000 }
-
-  function cleanUp() {
-    noble.stopScanning();
-    callback(null);
-  }
-
-  noble.on('discover', function(peripheralInstance) {
-    if(peripheralId == peripheralInstance.id) {
-      if(_cleanupTimeout){clearTimeout(_cleanupTimeout);}
-      noble.stopScanning();
-      callback(null, peripheralInstance);
-    }
-  });
-
-  noble.startScanning(
-    [BLE_CONF_SYSTEM_SERVICE_ID], 
-    INCLUDE_DUPES, 
-    (err) => { 
-      if(!err){
-        _cleanupTimeout = setTimeout(cleanUp, timeout);
-      }else{
-        callback(err);
-      }
-    }
-  );
-}
-
-

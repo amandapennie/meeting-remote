@@ -27,10 +27,11 @@ function orderTopFour(state, orderedPeripherals, peripheral) {
       const topFour = orderedPeripherals.slice(0,4);
       const topFourIds = topFour.map(p => p.id);
 
-      // if we are in the top four and wasnt already
+      // if we are in the top four and werent already
       if(topFourIds.indexOf(peripheralId) > -1 && currentTopFourIds.indexOf(peripheralId) < 0) {
         //need to swap into nearestPeripherals
         for(var i=0;i<=3;i++) {
+          // insert if index higher than current list or the peripheral is no longer in top four
           if(i > (currentTopFourIds.length - 1) || topFourIds.indexOf(currentTopFourIds[i]) < 0) {
             currentTopFour[i] = peripheral;
             currentTopFourIds[i] = peripheralId;

@@ -15,7 +15,6 @@ import {
 import { Actions as RouterActions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 
-import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
 

@@ -16,7 +16,6 @@ import {
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
 import Config from '../config';
@@ -58,7 +57,7 @@ class ProviderDashboardView extends React.Component {
     //clear join code validation
     this.props.clearValidateMeeting();
 
-    if(this.props.bluetoothState.bluetoothHardwareState === "poweredOn"){
+    if(this.props.bluetoothState.bluetoothHardwareState === "on"){
       this.beginScan();
     }
 
@@ -75,13 +74,13 @@ class ProviderDashboardView extends React.Component {
         return state;
       });
 
-      if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn"){
+      if(nextProps.bluetoothState.bluetoothHardwareState === "on"){
         this.beginScan();
       }
     }
 
     if(this.props.launchRequested && !nextProps.launchRequested && 
-        nextProps.bluetoothState.bluetoothHardwareState === "poweredOn") {
+        nextProps.bluetoothState.bluetoothHardwareState === "on") {
         //launch was killed, possibly because of timeout connecting to peripheral
         this.setState((state) => {
           state.selectedPeripheral = null;
@@ -91,8 +90,8 @@ class ProviderDashboardView extends React.Component {
         this.beginScan();
     }
 
-    if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn" &&
-       this.props.bluetoothState.bluetoothHardwareState !== "poweredOn" &&
+    if(nextProps.bluetoothState.bluetoothHardwareState === "on" &&
+       this.props.bluetoothState.bluetoothHardwareState !== "on" &&
        this.props.bluetoothState.scanning === false) {
       this.beginScan()
     }
