@@ -125,7 +125,16 @@ function checkAndUpdateProviderAuth(providerType) {
     return async function (dispatch, getState) {
       const state = getState();
       const providerAuth = state.provider.authenticatedProviders[providerType];
-      const checkResp = await gtm.checkStaleAccess(providerAuth.access);
+      console.log(providerAuth);
+      var checkResp;
+      try{
+        checkResp = await gtm.checkStaleAccess(providerAuth.access);
+      }catch(ex){
+        Sentry.captureMessage("exception calling checkStaleAccess");
+        RouterActions.login({type: 'replace'});
+        return;
+      }
+      
       if(checkResp.refreshed) {
         providerAuth.access = checkResp.access;
         providerAuth.access.expiresAt = getExpirationForAccess(checkResp.access);
