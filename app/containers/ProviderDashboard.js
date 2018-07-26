@@ -16,7 +16,6 @@ import {
 import { connect } from 'react-redux';
 import { Actions as RouterActions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import noble from 'react-native-ble';
 import * as bluetoothActions from '../store/actions/bluetooth';
 import * as providerActions from '../store/actions/provider';
 import Config from '../config';
@@ -39,7 +38,7 @@ class ProviderDashboardView extends React.Component {
     this.state = {
       appState: 'active',
       launchType: null,
-      selectedMeetingId: 'profileId',
+      selectedMeeting: {id: 'profileId', title: props.profile.profileId, subject: 'personalId', isOrganizer: true},
       selectedPeripheral: null,
       hasValidLaunchInfo: false,
     };
@@ -58,7 +57,7 @@ class ProviderDashboardView extends React.Component {
     //clear join code validation
     this.props.clearValidateMeeting();
 
-    if(this.props.bluetoothState.bluetoothHardwareState === "poweredOn"){
+    if(this.props.bluetoothState.bluetoothHardwareState === "on"){
       this.beginScan();
     }
 
@@ -69,19 +68,19 @@ class ProviderDashboardView extends React.Component {
   componentWillReceiveProps(nextProps) {
     if(this.props.launchData && nextProps.launchData === null) {
       this.setState((state) => {
-        state.selectedMeetingId = "profileId";
+        state.selectedMeeting = {id: "profileId"};
         state.selectedPeripheral = null;
         state.hasValidLaunchInfo = false;
         return state;
       });
 
-      if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn"){
+      if(nextProps.bluetoothState.bluetoothHardwareState === "on"){
         this.beginScan();
       }
     }
 
     if(this.props.launchRequested && !nextProps.launchRequested && 
-        nextProps.bluetoothState.bluetoothHardwareState === "poweredOn") {
+        nextProps.bluetoothState.bluetoothHardwareState === "on") {
         //launch was killed, possibly because of timeout connecting to peripheral
         this.setState((state) => {
           state.selectedPeripheral = null;
@@ -91,8 +90,8 @@ class ProviderDashboardView extends React.Component {
         this.beginScan();
     }
 
-    if(nextProps.bluetoothState.bluetoothHardwareState === "poweredOn" &&
-       this.props.bluetoothState.bluetoothHardwareState !== "poweredOn" &&
+    if(nextProps.bluetoothState.bluetoothHardwareState === "on" &&
+       this.props.bluetoothState.bluetoothHardwareState !== "on" &&
        this.props.bluetoothState.scanning === false) {
       this.beginScan()
     }
@@ -142,20 +141,33 @@ class ProviderDashboardView extends React.Component {
   launchMeeting = () => {
     var meetingId;
     if(this.props.launchType == "start") {
-      if(this.state.selectedMeetingId == "profileId") {
-        //start user
+      if(this.state.selectedMeeting.id == "profileId") {
+        //start new meeting
         meetingId = this.props.profile.meetingId;
         this.props.startMeetingWithId({
             providerType: this.props.providerType,
-            peripheral: this.state.selectedPeripheral
+            peripheral: this.state.selectedPeripheral,
+            subject: this.state.selectedMeeting.subject
         }, meetingId);
       }else{
-        this.props.startMeetingWithId({
+        // start scheduled meeting
+        console.log("start scheduled");
+        if(this.state.selectedMeeting.isOrganizer){
+          this.props.startMeetingWithId({
+              providerType: this.props.providerType,
+              peripheral: this.state.selectedPeripheral,
+              subject: this.state.selectedMeeting.subject
+          }, this.state.selectedMeeting.id);
+        }else{
+          // scheduled meeting where they are not the organizer
+          this.props.joinMeeting({
             providerType: this.props.providerType,
             peripheral: this.state.selectedPeripheral
-        }, this.state.selectedMeetingId);
+          }, this.state.selectedMeeting.id);
+        }
       }
     }else {
+      // join via entering code
       this.props.joinMeeting({
         providerType: this.props.providerType,
         peripheral: this.state.selectedPeripheral
@@ -176,7 +188,7 @@ class ProviderDashboardView extends React.Component {
     this.setState((state) => {
       var validLaunchInfo = false;
       if(this.props.launchType === 'start') {
-        validLaunchInfo = !!state.selectedMeetingId && peripheral != null;
+        validLaunchInfo = !!state.selectedMeeting && peripheral != null;
       }
 
       if(this.props.launchType === 'join') {
@@ -190,9 +202,9 @@ class ProviderDashboardView extends React.Component {
     });
   }
 
-  onMeetingIdSelected = (meetingId) => {
+  onMeetingIdSelected = (meeting) => {
     this.setState((state) => {
-      state.selectedMeetingId = meetingId;
+      state.selectedMeeting = meeting;
       state.hasValidLaunchInfo = !!state.selectedPeripheral;
       return state;
     });
@@ -209,7 +221,7 @@ class ProviderDashboardView extends React.Component {
     var validLaunchInfo = false;
 
     if(type === 'start') {
-      validLaunchInfo = !!this.state.selectedMeetingId && !!this.state.selectedPeripheral;
+      validLaunchInfo = !!this.state.selectedMeeting && !!this.state.selectedPeripheral;
     }
 
     if(type === 'join') {
@@ -237,9 +249,10 @@ class ProviderDashboardView extends React.Component {
         onRefresh={this._refreshMeetingChoices}
         refreshing={this.props.upcomingMeetingsLoading}
         profileId={this.props.profile.profileId}
+        currentUserId={this.props.currentUserId}
         meetings={this.props.upcomingMeetings}
         onSelected={this.onMeetingIdSelected}
-        selected={this.state.selectedMeetingId} />
+        selected={this.state.selectedMeeting} />
     );
   }
 
@@ -333,6 +346,7 @@ function mapStateToProps(state, ownProps) {
   
   return {
     providerType: state.provider.currentProviderType,
+    currentUserId: state.provider.currentUserId,
     launchRequested: state.provider.launchRequested,
     launchData: state.provider.launchData,
     authenticatedProviders: state.provider.authenticatedProviders,

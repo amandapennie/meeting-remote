@@ -43,9 +43,7 @@ export default handleActions(
     },
 
     [actions.constants.PROVIDER_SESSION_KILL_REQUESTED]: (state, action) => {
-      const lastLaunchData = state.launchData;
-      lastLaunchData.launchCode = null;
-      return Object.assign({}, state, {launchRequested: false, launchData: null, lastLaunchData});
+      return Object.assign({}, state, {launchRequested: false, launchData: null});
     },
 
     // currently kill session data if peripheral disconnects
@@ -58,9 +56,7 @@ export default handleActions(
     },
 
     [actions.constants.PROVIDER_LAUNCH_CODE_GRANTED]: (state, action) => {
-      console.log("before grant");
-      console.log(state);
-      return Object.assign({}, state, {launchData: action.payload});
+      return Object.assign({}, state, {launchData: action.payload, lastLaunchId: action.payload.launchId});
     },
 
     [actions.constants.PROVIDER_VALIDATE_MEETING]: (state, action) => {

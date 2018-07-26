@@ -33,12 +33,12 @@ YellowBox.ignoreWarnings([
 ]);
 
 // sentry error logging
-Sentry.config(SENTRY_PUBLIC_DSN).install();
+// Sentry.config(SENTRY_PUBLIC_DSN).install();
 
-Sentry.setTagsContext({
-  "environment": SENTRY_ENVIRONMENT,
-  "react": true
-});
+// Sentry.setTagsContext({
+//   "environment": SENTRY_ENVIRONMENT,
+//   "react": true
+// });
 
 const scenes = Actions.create(
   <Scene key="root">
