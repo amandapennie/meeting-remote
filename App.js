@@ -1,6 +1,7 @@
 import './shim.js'
 import React from 'react';
 import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
+import VersionNumber from 'react-native-version-number';
 import { connect, Provider } from 'react-redux';
 import { YellowBox } from 'react-native';
 import { store, persistor } from './app/store';
@@ -32,13 +33,14 @@ YellowBox.ignoreWarnings([
   'Module RNBLE requires main queue setup since it overrides `init` but doesn\'t implement `requiresMainQueueSetup`. In a future release React Native will default to initializing all native modules on a background thread unless explicitly opted-out of.'
 ]);
 
-// sentry error logging
-// Sentry.config(SENTRY_PUBLIC_DSN).install();
+//sentry error logging
+Sentry.config(SENTRY_PUBLIC_DSN).install();
 
-// Sentry.setTagsContext({
-//   "environment": SENTRY_ENVIRONMENT,
-//   "react": true
-// });
+Sentry.setTagsContext({
+  "appVersion": VersionNumber.appVersion,
+  "environment": SENTRY_ENVIRONMENT,
+  "react": true
+});
 
 const scenes = Actions.create(
   <Scene key="root">
