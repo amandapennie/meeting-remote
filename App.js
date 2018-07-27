@@ -1,7 +1,7 @@
 import './shim.js'
 import React from 'react';
 import { Actions, Scene, Router, ActionConst } from 'react-native-router-flux';
-import VersionNumber from 'react-native-version-number';
+import DeviceInfo from 'react-native-device-info';
 import { connect, Provider } from 'react-redux';
 import { YellowBox } from 'react-native';
 import { store, persistor } from './app/store';
@@ -37,7 +37,7 @@ YellowBox.ignoreWarnings([
 Sentry.config(SENTRY_PUBLIC_DSN).install();
 
 Sentry.setTagsContext({
-  "appVersion": VersionNumber.appVersion,
+  "appVersion": DeviceInfo.getReadableVersion(),
   "environment": SENTRY_ENVIRONMENT,
   "react": true
 });

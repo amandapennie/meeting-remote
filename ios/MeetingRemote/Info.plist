@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>2</string>
 	<key>LSApplicationCategoryType</key>
-	<string/>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -42,7 +42,7 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>To connect to conference systems</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FontAwesome.ttf</string>
